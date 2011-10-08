@@ -35,9 +35,14 @@ function to_ul (filelist) {
   for (f = 0; f < filelist.length; f++) {
     li = document.createElement ("li");
     link = document.createElement("a");
-    link.setAttribute("href", "/data/file/"+filelist[f]);
+    link.setAttribute("href", "/file/"+filelist[f]);
     link.appendChild (document.createTextNode (filelist[f]));
     li.appendChild (link)
+    li.appendChild (document.createTextNode(" | "));
+    a_send = document.createElement("a");
+    a_send.setAttribute("href", "/autosend/"+filelist[f]);
+    a_send.appendChild (document.createTextNode("Send"));
+    li.appendChild (a_send)
     ul.appendChild (li);
   }
   return ul;

@@ -5,6 +5,10 @@
 <h2>
 输入验证码以发送文章
 </h2>
+<div id="article">
+  <p><pre id="title"></pre></p>
+  <p><pre id="content"></pre></p>
+</div>
 <div>
 验证码：<img id="secimage" src="" /><br/>
 <form action="/data/send" method="POST">
@@ -15,16 +19,23 @@
 </div>
 
 <script>
+    var filename = '${filename}';
     $(document).ready(function(){
         //$('#result').text("Getting data...");
+        ONERING.getJSON('/data/file/'+filename, function(json) {
+            var title = json.title;
+            var content = json.content;
+            $("#title").text(title);
+            $("#content").text(content);
+        });
         ONERING.getJSON('/data/send', function(json) {
             var data = json['name'];
-            $('#secimage').attr("src", "static/secimage/" + data);
+            $('#secimage').attr("src", "/static/secimage/" + data);
         });
     });
     $('#submit').click(function(){
         var seccode = $('#seccode').val();
-        ONERING.post('/data/send', {seccode: seccode}, function(json) {
+        ONERING.post('/data/send', {seccode:seccode, title:$("#title").text(), content:$("#content").text()}, function(json) {
             var data = json['name'];
             $('#result').text("文章URL地址:" + data);
         }, "json");

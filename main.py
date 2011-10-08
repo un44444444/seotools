@@ -29,10 +29,11 @@ urls = (
 	'/static/(.*)', 'static',
 	'/filemgr', 'filemgr',
 	'/data/test', 'data_test',
-	'/autosend', 'autosend',
+	'/autosend/(.*)', 'autosend',
 	'/data/send', 'data_send',
 	'/filelist', 'filelist',
 	'/data/filelist', 'data_filelist',
+	'/file/(.*)', 'fileshow',
 	'/data/file/(.*)', 'data_file',
 )
 
@@ -70,8 +71,8 @@ class filemgr:
 		return render.filemgr()
 
 class autosend:
-	def GET(self):
-		return render.autosend()
+	def GET(self, filename):
+		return render.autosend(filename=filename)
 
 class data_send:
 	def __init__(self):
@@ -90,10 +91,15 @@ class data_send:
 	
 	@jsonize
 	def POST(self):
+		print "data_send.POST"
 		i = web.input()
 		seccode = str(i.seccode)
-		title = u'测试1文章'.encode('gbk','ignore');
-		content = u'测试2内容!测试3内容!'.encode('gbk','ignore')
+#		title = u'测试1文章'.encode('gbk','ignore');
+#		content = u'测试2内容!测试3内容!'.encode('gbk','ignore')
+		title = i.title
+		title = title.encode('gbk');
+		content = i.content
+		content = content.encode('gbk');
 		url = self.discuz.post(self.fid, title, content, seccode)
 		url = url.decode('gbk').encode('utf-8')
 		return dict(name=url)
@@ -112,6 +118,10 @@ class data_filelist:
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
 
+class fileshow:
+	def GET(self, filename):
+		return render.fileshow(filename=filename)
+
 class data_file:
 	@jsonize
 	def GET(self, filename):
@@ -124,6 +134,7 @@ class data_file:
 		#
 		content = open('R:/%s' % filename, 'r').read()
 		try:
+			content = content.decode('utf-8').encode('gbk')
 			content = content.decode('gbk').encode('utf-8')
 		except:
 			pass
@@ -140,6 +151,7 @@ class data_test:
 
 class static:
 	def GET(self, filename):
+		#print filename
 		content = open('static/%s' % filename, 'rb').read()
 		content_types = {
 			'.js': 'text/javascript',
