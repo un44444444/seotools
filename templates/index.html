@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>SEO Tools</title>
+    <script type="text/javascript" src="onering://onering/onering.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style.css"></style>
+</head>
+<body>
+    <article>
+        <ul>
+            <li><a href="/about">About</a></li>
+            <!-- <li><a href="/filemgr">File Manager</a></li> -->
+            <li><a href="/autosend">Auto Send</a></li>
+        </ul>
+    </article>
+    <footer id="page_footer">
+        <a href="javascript:ONERING.getCurrentWindow().showInspector()">Show Inspector</a>
+    </footer>
+    <script>
+        ONERING.bind('aboutToQuit', function() { ONERING.log("Demo quit.") });
+    </script>
+</body>
+</html>

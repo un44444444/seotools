@@ -1,0 +1,32 @@
+﻿<%inherit file="/page_base.html" />
+
+<%def name="page_name()">Auto Send</%def>
+
+<h2>
+输入验证码以发送文章
+</h2>
+<div>
+验证码：<img id="secimage" src="" /><br/>
+<form action="/data/send" method="POST">
+<label for="seccode">输入验证码：</label><input type="text" id="seccode" name="seccode" value="" />
+<button id="submit">提交验证码</button>
+</form>
+<div id="result"></div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        //$('#result').text("Getting data...");
+        ONERING.getJSON('/data/send', function(json) {
+            var data = json['name'];
+            $('#secimage').attr("src", "static/secimage/" + data);
+        });
+    });
+    $('#submit').click(function(){
+        var seccode = $('#seccode').val();
+        ONERING.post('/data/send', {seccode: seccode}, function(json) {
+            var data = json['name'];
+            $('#result').text("文章URL地址:" + data);
+        }, "json");
+    });
+</script>
