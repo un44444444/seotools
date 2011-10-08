@@ -9,6 +9,7 @@ try:
 except ImportError:
 	import simplejson as json
 import logging
+import fnmatch
 
 import web
 from web.contrib.template import render_mako
@@ -30,6 +31,9 @@ urls = (
 	'/data/test', 'data_test',
 	'/autosend', 'autosend',
 	'/data/send', 'data_send',
+	'/filelist', 'filelist',
+	'/data/filelist', 'data_filelist',
+	'/data/file/(.*)', 'data_file',
 )
 
 render = render_mako(
@@ -73,7 +77,7 @@ class data_send:
 	def __init__(self):
 		param = {
 			'url':'http://localhost/discuz/',
-			'image_base':'R:/onering/static/secimage/',
+			'image_base':'static/secimage/',
 		}
 		self.discuz = DiscuzSingleton.getInst(param)
 		self.fid = 2
@@ -93,6 +97,38 @@ class data_send:
 		url = self.discuz.post(self.fid, title, content, seccode)
 		url = url.decode('gbk').encode('utf-8')
 		return dict(name=url)
+
+class filelist:
+	def GET(self):
+		return render.filelist()
+
+class data_filelist:
+	@jsonize
+	def GET(self):
+		path = 'R:/'
+		file_list = []
+		for file_name in os.listdir(path):
+			if fnmatch.fnmatch( file_name, '*.txt' ):
+				file_list.append(file_name.decode('gbk').encode('utf-8'))
+		return dict(files=file_list)
+
+class data_file:
+	@jsonize
+	def GET(self, filename):
+		#
+		title = filename.replace('.txt','')
+		try:
+			title = title.decode('gbk').encode('utf-8')
+		except:
+			pass
+		#
+		content = open('R:/%s' % filename, 'r').read()
+		try:
+			content = content.decode('gbk').encode('utf-8')
+		except:
+			pass
+		#
+		return dict(title=title, content=content)
 
 class data_test:
 	@jsonize
