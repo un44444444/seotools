@@ -14,14 +14,18 @@ class Discuz:
 		conf = {
 			'url':'http://localhost/discuz/',
 			'action_login':'member.php?mod=logging&action=login&loginsubmit=yes&handlekey=login&loginhash=LIQ5i',
-			'action_post':'forum.php?mod=post&action=newthread',
+			'action_preparepost':'forum.php?mod=post&action=newthread',
+			'action_post':'forum.php?mod=post&action=newthread&extra=&topicsubmit=yes',
+			'action_seccode':'misc.php?mod=seccode&action=update&inajax=1',
 			'encoding':'gbk',
 			'image_base':'R:/',
 		}
 		conf.update(param)
 		self.url = conf['url']
 		self.action_login = self.url + conf['action_login']
+		self.action_preparepost = self.url + conf['action_preparepost']
 		self.action_post = self.url + conf['action_post']
+		self.action_seccode = self.url + conf['action_seccode']
 		self.encoding = conf['encoding']
 		self.image_base = conf['image_base']
 		#print "Discuz.__init__"
@@ -66,7 +70,7 @@ class Discuz:
 			return ''
 
 	def _getKeyValues(self,fid):
-		action=self.action_post+'&fid='+str(fid)
+		action=self.action_preparepost+'&fid='+str(fid)
 		request=urllib2.Request(action,urllib.urlencode(''))
 		content = ""
 		err_count = 0
@@ -116,7 +120,7 @@ class Discuz:
 		#
 		(self.formhash, self.posttime, self.sechash) = self._getKeyValues(fid)
 		#
-		action=self.url + 'misc.php?mod=seccode&action=update&idhash='+self.sechash+'&inajax=1&ajaxtarget=seccode_'+self.sechash
+		action=self.action_seccode + '&idhash='+self.sechash+'&ajaxtarget=seccode_'+self.sechash
 		request=urllib2.Request(action,urllib.urlencode(''))
 		content = ""
 		err_count = 0
@@ -158,7 +162,7 @@ class Discuz:
 		remote_img = self.url + img_src
 		print remote_img
 		req = urllib2.Request(remote_img)
-		req.add_header('Referer', self.action_post+'&fid='+str(fid))
+		req.add_header('Referer', self.action_preparepost+'&fid='+str(fid))
 		data = urllib2.urlopen(req).read()
 		file_name = 'secimage_'+self.sechash+'_'+img_update+'.png'
 		f = open(self.image_base + file_name,"wb")
@@ -171,7 +175,7 @@ class Discuz:
 		postdata=(("formhash",self.formhash),("posttime",self.posttime),("wysiwyg","1"),("subject",title),("message",contents),("sechash",self.sechash),("seccodeverify",seccode))
 		params=urllib.urlencode(postdata,self.encoding)
 		#print params
-		action=self.url+'forum.php?mod=post&action=newthread&fid='+str(fid)+'&extra=&topicsubmit=yes'
+		action=self.action_post+'&fid='+str(fid)
 		request=urllib2.Request(action,params)
 		content = ""
 		err_count = 0
@@ -210,18 +214,6 @@ class Discuz:
 		#f.write(content)
 		#f.close()
 		return content
-
-class DiscuzSingleton:
-	def __init__(self):
-		"disable the __init__ method"
-	
-	__inst = None # make it so-called private
-	
-	@staticmethod
-	def getInst(param):
-		if not DiscuzSingleton.__inst:
-			DiscuzSingleton.__inst = Discuz(param)
-		return DiscuzSingleton.__inst
 
 
 if __name__ == "__main__":

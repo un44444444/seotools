@@ -20,7 +20,7 @@ sys.path.append(os.sep.join((os.getcwd(),'lib')))
 import onering
 
 from filemgr import FileMgr
-from discuz_auth import Discuz,DiscuzSingleton
+from website import WebsitesMgr
 
 urls = (
 	'/init', 'init',
@@ -30,7 +30,7 @@ urls = (
 	'/filemgr', 'filemgr',
 	'/data/test', 'data_test',
 	'/autosend/(.*)', 'autosend',
-	'/data/send', 'data_send',
+	'/data/send/(.*)', 'data_send',
 	'/filelist', 'filelist',
 	'/data/filelist', 'data_filelist',
 	'/file/(.*)', 'fileshow',
@@ -75,33 +75,29 @@ class autosend:
 		return render.autosend(filename=filename)
 
 class data_send:
-	def __init__(self):
-		param = {
-			'url':'http://localhost/discuz/',
-			'image_base':'static/secimage/',
-		}
-		self.discuz = DiscuzSingleton.getInst(param)
-		self.fid = 2
-	
+#	def __init__(self):
+#		param = {
+#			'url':'http://localhost/discuz/',
+#			'image_base':'static/secimage/',
+#		}
+#		self.discuz = WebsitesMgr.getInst(param)
+#		self.fid = 2
+#	
 	@jsonize
-	def GET(self):
-		self.discuz.login('un44444444', '44444444')
-		filename = self.discuz.getSeccode(self.fid)
+	def GET(self, website):
+		site = WebsitesMgr.getInst(website)
+		filename = site.getSecimage()
 		return dict(name=filename)
 	
 	@jsonize
-	def POST(self):
+	def POST(self, website):
 		print "data_send.POST"
 		i = web.input()
-		seccode = str(i.seccode)
-#		title = u'测试1文章'.encode('gbk','ignore');
-#		content = u'测试2内容!测试3内容!'.encode('gbk','ignore')
 		title = i.title
-		title = title.encode('gbk');
 		content = i.content
-		content = content.encode('gbk');
-		url = self.discuz.post(self.fid, title, content, seccode)
-		url = url.decode('gbk').encode('utf-8')
+		seccode = str(i.seccode)
+		site = WebsitesMgr.getInst(website)
+		url = site.postArctle(title, content, seccode)
 		return dict(name=url)
 
 class filelist:
@@ -134,7 +130,6 @@ class data_file:
 		#
 		content = open('R:/%s' % filename, 'r').read()
 		try:
-			content = content.decode('utf-8').encode('gbk')
 			content = content.decode('gbk').encode('utf-8')
 		except:
 			pass
