@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # encoding: UTF-8
 
-import discuz_auth
+import string
+from discuz_x2 import Discuz as discuz_x2
 
 websites = {
 	'localhost':{
-		'model': 'discuz_auth.Discuz',
+		'model': 'discuz_x2',
 		'url': 'http://localhost/discuz/',
 		'image_base':'static/secimage/',
 		'encoding':'gbk',
@@ -20,6 +21,8 @@ websites = {
 		'username': 'un44444444',
 		'password': '44444444',
 		'fid': 2,
+		'action_login':string.Template('logging.php?action=login'),
+		'action_preparepost':string.Template('post.php?action=newthread&fid=$fid&extra=20'),
 	},
 }
 
@@ -27,7 +30,8 @@ class Website:
 	def __init__(self, name):
 		conf = websites[name]
 		self.fid = conf['fid']
-		self.discuz = discuz_auth.Discuz(conf)
+		constructor = globals()[conf['model']]
+		self.discuz = constructor(conf)
 		self.discuz.login(conf['username'], conf['password'])
 	
 	def getSecimage(self):
