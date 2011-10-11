@@ -3,6 +3,7 @@
 
 import string
 from discuz_x2 import Discuz as discuz_x2
+from discuz_600 import Discuz as discuz_600
 
 websites = {
 	'localhost':{
@@ -15,14 +16,13 @@ websites = {
 		'fid': 2,
 	},
 	'bbs.55bbs.com':{
+		'model': 'discuz_600',
 		'url': 'http://bbs.55bbs.com/',
 		'image_base':'static/secimage/55bbs_',
 		'encoding':'gbk',
 		'username': 'un44444444',
 		'password': '44444444',
 		'fid': 2,
-		'action_login':string.Template('logging.php?action=login'),
-		'action_preparepost':string.Template('post.php?action=newthread&fid=$fid&extra=20'),
 	},
 }
 
