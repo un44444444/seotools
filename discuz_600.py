@@ -30,7 +30,7 @@ class Discuz:
 		self.formhash = ''
 
 	def login(self,username,password):
-		logindata=(('username',username), ('password',password))
+		logindata=(('loginfield','username'), ('username',username), ('password',password))
 		self.action_login = self.url + self.conf['action_login'].substitute()
 		req=urllib2.Request(self.action_login,urllib.urlencode(logindata))
 		if self.conf['action_login_referer']:
@@ -55,7 +55,7 @@ class Discuz:
 					print "Wait for 5 minutes..."
 					time.sleep(5 * 60)
 
-		#print content
+		print content
 		return content
 
 	def _getResultInfo(self,content):
@@ -111,6 +111,7 @@ class Discuz:
 		#
 		action_seccode = self.url + self.conf['action_seccode'].substitute()
 		request=urllib2.Request(action_seccode,urllib.urlencode(''))
+		request.add_header('Referer', self.action_preparepost)
 		content = ""
 		err_count = 0
 		flage = True
@@ -131,31 +132,10 @@ class Discuz:
 					print "Wait for 5 minutes..."
 					time.sleep(5 * 60)
 		#print content
-		try:
-			self._getResultInfo(content)
-			str_re='<img\s*.*\s*src="(.*?)"\s*.*\/>'
-			reObj=re.compile(str_re)
-			allMatch=reObj.findall(content)
-			img_src=allMatch[0]
-			#print img_src
-		except Exception,e:
-			print e
-			print content
-			exit(1)
-		#
-		str_re='update=([0-9]*)'
-		reObj=re.compile(str_re)
-		allMatch=reObj.findall(img_src)
-		img_update=allMatch[0]
-		#download imgage to local
-		remote_img = self.url + img_src
-		print remote_img
-		req = urllib2.Request(remote_img)
-		req.add_header('Referer', self.action_preparepost)
-		data = urllib2.urlopen(req).read()
+		img_update='1212121'
 		file_name = 'secimage_'+img_update+'.png'
 		f = open(self.image_base + file_name,"wb")
-		f.write(data)
+		f.write(content)
 		f.close()
 		return file_name
 
@@ -212,18 +192,12 @@ class Discuz:
 if __name__ == "__main__":
 #	try:
 		param = {
-			'url':'http://localhost/discuz/',
+			'url':'http://localhost/discuz_600/',
 		}
 		fid = 2
 		discuz = Discuz(param)
-#		response = urllib2.urlopen('http://localhost/discuz/')
-#		info = response.info()
-#		print info
-#		print info.headers
-#		server = info.getheader('Server', '')
-#		print server
-#		exit()
 		discuz.login('un44444444', '44444444')
+		exit()
 		#
 		local_file = discuz.getSeccode(fid)
 		print local_file
