@@ -5,6 +5,7 @@
 import string
 import urllib,urllib2
 import re,time
+import random
 import opener
 
 class Discuz:
@@ -20,7 +21,7 @@ class Discuz:
 			'action_login_referer':'',
 			'action_preparepost':string.Template('post.php?action=newthread&fid=$fid&extra=20'),
 			'action_post':string.Template('post.php?action=newthread&fid=$fid&inajax=1&extra=20&topicsubmit=yes'),
-			'action_seccode':string.Template('seccode.php?update=0.1846479857340455'),
+			'action_seccode':string.Template('seccode.php?update=0.${randstr}'),
 		}
 		self.conf.update(param)
 		self.url = self.conf['url']
@@ -30,7 +31,7 @@ class Discuz:
 		self.formhash = ''
 
 	def login(self,username,password):
-		logindata=(('loginfield','username'), ('username',username), ('password',password))
+		logindata=(('loginfield','username'), ('username',username), ('password',password), ('loginsubmit','true'))
 		self.action_login = self.url + self.conf['action_login'].substitute()
 		req=urllib2.Request(self.action_login,urllib.urlencode(logindata))
 		if self.conf['action_login_referer']:
@@ -55,7 +56,7 @@ class Discuz:
 					print "Wait for 5 minutes..."
 					time.sleep(5 * 60)
 
-		print content
+		#print content
 		return content
 
 	def _getResultInfo(self,content):
@@ -109,8 +110,11 @@ class Discuz:
 		#
 		self._preparePost(fid)
 		#
-		action_seccode = self.url + self.conf['action_seccode'].substitute()
-		request=urllib2.Request(action_seccode,urllib.urlencode(''))
+		rand1 = random.randint(10000000,99999999)
+		rand2 = random.randint(10000000,99999999)
+		randstr = '%d%d'%(rand1,rand2)
+		action_seccode = self.url + self.conf['action_seccode'].substitute(randstr=randstr)
+		request=urllib2.Request(action_seccode)
 		request.add_header('Referer', self.action_preparepost)
 		content = ""
 		err_count = 0
@@ -132,8 +136,7 @@ class Discuz:
 					print "Wait for 5 minutes..."
 					time.sleep(5 * 60)
 		#print content
-		img_update='1212121'
-		file_name = 'secimage_'+img_update+'.png'
+		file_name = 'secimage_'+randstr+'.png'
 		f = open(self.image_base + file_name,"wb")
 		f.write(content)
 		f.close()
@@ -159,7 +162,7 @@ class Discuz:
 				#
 				status_code=response.getcode()
 				print status_code
-				if status_code == 301:
+				if status_code==301 or status_code==302:
 					http_message=response.info()
 					print http_message
 					content=http_message.getheader('location', 'can not find location')
@@ -171,7 +174,11 @@ class Discuz:
 					return url
 				#
 				content=response.read()
-				print 'len(content):'+str(len(content))
+				str_re='<br\s\/><br\s\/><a\shref="(.*?)">\['
+				reObj=re.compile(str_re)
+				allMatch=reObj.findall(content)
+				if len(allMatch) == 1:
+					return self.url + allMatch[0]
 				flage=False
 			except urllib2.HTTPError, e:
 				if err_count > 10:
@@ -197,7 +204,7 @@ if __name__ == "__main__":
 		fid = 2
 		discuz = Discuz(param)
 		discuz.login('un44444444', '44444444')
-		exit()
+		#exit()
 		#
 		local_file = discuz.getSeccode(fid)
 		print local_file

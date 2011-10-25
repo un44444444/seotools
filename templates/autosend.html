@@ -28,14 +28,14 @@
             $("#title").text(title);
             $("#content").text(content);
         });
-        ONERING.getJSON('/data/send/localhost', function(json) {
+        ONERING.getJSON('/data/send/bbs.55bbs.com', function(json) {
             var data = json['name'];
-            $('#secimage').attr("src", "/static/secimage/" + data);
+            $('#secimage').attr("src", "/static/secimage/55bbs_" + data);
         });
     });
     $('#submit').click(function(){
         var seccode = $('#seccode').val();
-        ONERING.post('/data/send/localhost', {seccode:seccode, title:$("#title").text(), content:$("#content").text()}, function(json) {
+        ONERING.post('/data/send/bbs.55bbs.com', {seccode:seccode, title:$("#title").text(), content:$("#content").text()}, function(json) {
             var data = json['name'];
             $('#result').text("文章URL地址:" + data);
         }, "json");

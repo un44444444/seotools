@@ -17,11 +17,13 @@ websites = {
 	},
 	'bbs.55bbs.com':{
 		'model': 'discuz_600',
-		'url': 'http://bbs.55bbs.com/',
+		#'url': 'http://bbs.55bbs.com/',
+		'url': 'http://localhost/discuz_600/',
 		'image_base':'static/secimage/55bbs_',
 		'encoding':'gbk',
 		'username': 'un44444444',
 		'password': '44444444',
+		#'fid': 30,
 		'fid': 2,
 	},
 }
