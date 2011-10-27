@@ -4,6 +4,7 @@
 import string
 from discuz_x2 import Discuz as discuz_x2
 from discuz_600 import Discuz as discuz_600
+from discuz_610 import Discuz as discuz_610
 
 websites = {
 	'localhost':{
@@ -17,14 +18,25 @@ websites = {
 	},
 	'bbs.55bbs.com':{
 		'model': 'discuz_600',
-		#'url': 'http://bbs.55bbs.com/',
-		'url': 'http://localhost/discuz_600/',
+		'url': 'http://bbs.55bbs.com/',
+		#'url': 'http://localhost/discuz_600/',
 		'image_base':'static/secimage/55bbs_',
 		'encoding':'gbk',
 		'username': 'un44444444',
+		'password': 'un44444444',
+		'fid': 30,
+		#'fid': 2,
+	},
+	'bbs.hefei.cc':{
+		'model': 'discuz_610',
+		'url': 'http://bbs.hefei.cc/',
+		#'url': 'http://localhost/discuz_610/',
+		'image_base':'static/secimage/hefei_',
+		'encoding':'gbk',
+		'username': 'un44444444',
 		'password': '44444444',
-		#'fid': 30,
-		'fid': 2,
+		'fid': 37,
+		#'fid': 2,
 	},
 }
 
