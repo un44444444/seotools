@@ -26,7 +26,6 @@ class Discuz:
 		self.url = self.conf['url']
 		self.encoding = self.conf['encoding']
 		self.image_base = self.conf['image_base']
-		#print "Discuz.__init__"
 		self.formhash = ''
 		self.posttime = ''
 		self.sechash = ''

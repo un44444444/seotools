@@ -35,7 +35,7 @@ websites = {
 		'encoding':'gbk',
 		'username': 'un44444444',
 		'password': '44444444',
-		'fid': 37,
+		'fid': 34,
 		#'fid': 2,
 	},
 }
@@ -50,6 +50,12 @@ class Website:
 	
 	def getSecimage(self):
 		return self.discuz.getSeccode(self.fid)
+	
+	def getSecqaa(self):
+		if hasattr(self.discuz,'getSecqaa'):
+			return self.discuz.getSecqaa(self.fid)
+		else:
+			return ('','')
 	
 	def postArctle(self, title, content, seccode):
 #		title = u'测试1文章'.encode('gbk','ignore');

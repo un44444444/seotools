@@ -31,6 +31,8 @@ urls = (
 	'/data/test', 'data_test',
 	'/autosend/(.*)', 'autosend',
 	'/data/send/(.*)', 'data_send',
+	'/data/seccode/(.*)', 'data_seccode',
+	'/data/secqaa/(.*)', 'data_secqaa',
 	'/filelist', 'filelist',
 	'/data/filelist', 'data_filelist',
 	'/file/(.*)', 'fileshow',
@@ -74,7 +76,7 @@ class autosend:
 	def GET(self, filename):
 		return render.autosend(filename=filename)
 
-class data_send:
+class data_seccode:
 #	def __init__(self):
 #		param = {
 #			'url':'http://localhost/discuz/',
@@ -88,7 +90,15 @@ class data_send:
 		site = WebsitesMgr.getInst(website)
 		filename = site.getSecimage()
 		return dict(name=filename)
-	
+
+class data_secqaa:
+	@jsonize
+	def GET(self, website):
+		site = WebsitesMgr.getInst(website)
+		(q,a) = site.getSecqaa()
+		return dict(q=q, a=a)
+
+class data_send:
 	@jsonize
 	def POST(self, website):
 		print "data_send.POST"

@@ -13,7 +13,11 @@
 验证码：<img id="secimage" src="" /><br/>
 <form action="/data/send" method="POST">
 <label for="seccode">输入验证码：</label><input type="text" id="seccode" name="seccode" value="" />
-<button id="submit">校验验证码</button><button id="submit">提交验证码</button>
+<button id="check">校验验证码</button><br/>
+<label id="sec_qaa">
+<label id="question" for="secqaa"></label><input type="text" id="secqaa" name="secqaa" value="" />
+</label><br/>
+<button id="submit">提交</button>
 </form>
 <div id="result"></div>
 </div>
@@ -28,14 +32,31 @@
             $("#title").text(title);
             $("#content").text(content);
         });
-        ONERING.getJSON('/data/send/bbs.55bbs.com', function(json) {
+        ONERING.getJSON('/data/seccode/bbs.hefei.cc', function(json) {
             var data = json['name'];
-            $('#secimage').attr("src", "/static/secimage/55bbs_" + data);
+            $('#secimage').attr("src", "/static/secimage/hefei_" + data);
+        });
+        ONERING.getJSON('/data/secqaa/bbs.hefei.cc', function(json) {
+            var q = json['q'];
+            if (/^\s*$/.test(q))
+            {
+            	$('#sec_qaa').hide();
+            	return;
+            }
+            if (/^.*\.png$/.test(q))
+            {
+            	var img = $('<img/>').attr("src", "/static/secimage/hefei_" + q);
+            	$('#question').append(img);
+            	return;
+            }
+            var a = json['a'];
+            $('#question').text(q);
+            $('#secqaa').val(a);
         });
     });
     $('#submit').click(function(){
         var seccode = $('#seccode').val();
-        ONERING.post('/data/send/bbs.55bbs.com', {seccode:seccode, title:$("#title").text(), content:$("#content").text()}, function(json) {
+        ONERING.post('/data/send/bbs.hefei.cc', {seccode:seccode, title:$("#title").text(), content:$("#content").text()}, function(json) {
             var data = json['name'];
             $('#result').text("文章URL地址:" + data);
         }, "json");

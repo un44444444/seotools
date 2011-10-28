@@ -27,7 +27,6 @@ class Discuz:
 		self.url = self.conf['url']
 		self.encoding = self.conf['encoding']
 		self.image_base = self.conf['image_base']
-		#print "Discuz.__init__"
 		self.formhash = ''
 
 	def login(self,username,password):
@@ -149,15 +148,37 @@ class Discuz:
 			print content
 			exit(1)
 		#
-		try:
-			a=''
-			str_re='.*答案:(.*?)$'
-			reObj=re.compile(str_re)
-			allMatch=reObj.findall(qaa)
-			a=allMatch[0]
-		except:
-			pass
-		return (qaa, a)
+		if '<' == qaa[0]:
+			try:
+				str_re='<img\s*src="(.*?)"\s*\/?>(.*)'
+				reObj=re.compile(str_re)
+				allMatch=reObj.findall(qaa)
+				(img_src,a)=allMatch[0]
+			except Exception,e:
+				print e
+				print content
+				exit(1)
+			#download imgage to local
+			remote_img = self.url + img_src
+			print remote_img
+			req = urllib2.Request(remote_img)
+			req.add_header('Referer', self.action_preparepost)
+			data = urllib2.urlopen(req).read()
+			file_name = 'checkimage'+str(time.time())+'.png'
+			f = open(self.image_base + file_name,"wb")
+			f.write(data)
+			f.close()
+			return (file_name, a)
+		else:
+			try:
+				a=''
+				str_re='.*答案:(.*?)$'
+				reObj=re.compile(str_re)
+				allMatch=reObj.findall(qaa)
+				a=allMatch[0]
+			except:
+				pass
+			return (qaa, a)
 
 	def getSeccode(self,fid):
 		#
@@ -273,7 +294,7 @@ if __name__ == "__main__":
 		param = {
 			'url':'http://bbs.hefei.cc/',
 		}
-		fid = 2
+		fid = 34
 		discuz = Discuz(param)
 		discuz.login('un44444444', '44444444')
 		#exit()
