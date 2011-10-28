@@ -56,7 +56,8 @@
     });
     $('#submit').click(function(){
         var seccode = $('#seccode').val();
-        ONERING.post('/data/send/bbs.hefei.cc', {seccode:seccode, title:$("#title").text(), content:$("#content").text()}, function(json) {
+        var secqaa = $('#secqaa').val();
+        ONERING.post('/data/send/bbs.hefei.cc', {seccode:seccode, secqaa:secqaa, title:$("#title").text(), content:$("#content").text()}, function(json) {
             var data = json['name'];
             $('#result').text("文章URL地址:" + data);
         }, "json");

@@ -57,12 +57,13 @@ class Website:
 		else:
 			return ('','')
 	
-	def postArctle(self, title, content, seccode):
+	def postArctle(self, title, content, seccode, secqaa=''):
 #		title = u'测试1文章'.encode('gbk','ignore');
 #		content = u'测试2内容!测试3内容!'.encode('gbk','ignore')
 		title = title.encode('gbk');
 		content = content.encode('gbk');
-		url = self.discuz.post(self.fid, title, content, seccode)
+		secqaa = secqaa.encode('gbk');
+		url = self.discuz.post(self.fid, title, content, seccode, secqaa)
 		url = url.decode('gbk').encode('utf-8')
 		return url
 

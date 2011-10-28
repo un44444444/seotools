@@ -106,8 +106,11 @@ class data_send:
 		title = i.title
 		content = i.content
 		seccode = str(i.seccode)
+		secqaa = ''
+		if hasattr(i,'secqaa'):
+			secqaa = i.secqaa
 		site = WebsitesMgr.getInst(website)
-		url = site.postArctle(title, content, seccode)
+		url = site.postArctle(title, content, seccode, secqaa)
 		return dict(name=url)
 
 class filelist:

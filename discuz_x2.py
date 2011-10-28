@@ -170,12 +170,16 @@ class Discuz:
 		f.close()
 		return file_name
 
-	def post(self,fid,title,contents, seccode=''):
+	def post(self,fid,title,contents, seccode='',secqaa=''):
 		""""post content"""
 		if not self.formhash:
 			self._preparePost(fid)
-		postdata=(("formhash",self.formhash),("posttime",self.posttime),("wysiwyg","1"),("subject",title),("message",contents),("sechash",self.sechash),("seccodeverify",seccode))
-		params=urllib.urlencode(postdata,self.encoding)
+		postdata=[("formhash",self.formhash),("posttime",self.posttime),("wysiwyg","1"),("subject",title),("message",contents),("sechash",self.sechash)]
+		if seccode:
+			postdata.append(("seccodeverify",seccode))
+		if secqaa:
+			postdata.append(("secanswer",secqaa))
+		params=urllib.urlencode(tuple(postdata),self.encoding)
 		#print params
 		self.formhash = ''
 		action_post = self.url + self.conf['action_post'].substitute(fid=fid)
