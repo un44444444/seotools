@@ -10,56 +10,87 @@
   <p><pre id="content"></pre></p>
 </div>
 <div>
-验证码：<img id="secimage" src="" /><br/>
-<form action="/data/send" method="POST">
-<label for="seccode">输入验证码：</label><input type="text" id="seccode" name="seccode" value="" />
-<button id="check">校验验证码</button><br/>
-<label id="sec_qaa">
-<label id="question" for="secqaa"></label><input type="text" id="secqaa" name="secqaa" value="" />
-</label><br/>
-<button id="submit">提交</button>
+<fieldset>
+<legend>bbs.55bbs.com</legend>
+<form name="bbs.55bbs.com" action="" method="POST">
+	验证码：<img id="secimage_bbs55bbscom" src="" /><br/>
+	<label for="seccode_bbs55bbscom">输入验证码：</label>
+	<input type="text" id="seccode_bbs55bbscom" value="" />
+	<button id="check_bbs55bbscom">校验验证码</button><br/>
+	<label id="sec_qaa_bbs55bbscom">
+	<label id="question_bbs55bbscom" for="secqaa_bbs55bbscom"></label>
+	<input type="text" id="secqaa_bbs55bbscom" value="" />
+	</label><br/>
+	<button id="submit_bbs55bbscom">提交</button>
+	<div id="result_bbs55bbscom"></div>
 </form>
-<div id="result"></div>
+</fieldset>
+<fieldset>
+<legend>bbs.hefei.cc</legend>
+<form name="bbs.hefei.cc" action="" method="POST">
+	验证码：<img id="secimage_bbshefeicc" src="" /><br/>
+	<label for="seccode_bbshefeicc">输入验证码：</label>
+	<input type="text" id="seccode_bbshefeicc" value="" />
+	<button id="check_bbshefeicc">校验验证码</button><br/>
+	<label id="sec_qaa_bbshefeicc">
+	<label id="question_bbshefeicc" for="secqaa_bbshefeicc"></label>
+	<input type="text" id="secqaa_bbshefeicc" value="" />
+	</label><br/>
+	<button id="submit_bbshefeicc">提交</button>
+	<div id="result_bbshefeicc"></div>
+</form>
+</fieldset>
 </div>
 
 <script>
     var filename = '${filename}';
     $(document).ready(function(){
-        //$('#result').text("Getting data...");
         ONERING.getJSON('/data/file/'+filename, function(json) {
             var title = json.title;
             var content = json.content;
             $("#title").text(title);
             $("#content").text(content);
         });
-        ONERING.getJSON('/data/seccode/bbs.hefei.cc', function(json) {
-            var data = json['name'];
-            $('#secimage').attr("src", "/static/secimage/hefei_" + data);
+        //
+        $('form').each(function(n,form){
+        	deal_fair(form.name);
         });
-        ONERING.getJSON('/data/secqaa/bbs.hefei.cc', function(json) {
+    });
+    function deal_fair(sitename)
+    {
+        var name = sitename.replace(/\./g,'');
+        ONERING.getJSON('/data/seccode/'+sitename, function(json) {
+            var data = json['name'];
+            $('#secimage_'+name).attr("src", "/static/secimage/"+sitename+"_" + data);
+        });
+        ONERING.getJSON('/data/secqaa/'+sitename, function(json) {
             var q = json['q'];
             if (/^\s*$/.test(q))
             {
-            	$('#sec_qaa').hide();
+            	$('#sec_qaa_'+name).hide();
             	return;
             }
             if (/^.*\.png$/.test(q))
             {
-            	var img = $('<img/>').attr("src", "/static/secimage/hefei_" + q);
-            	$('#question').append(img);
+            	var img = $('<img/>').attr("src", "/static/secimage/"+sitename+"_" + q);
+            	$('#question_'+name).append(img);
             	return;
             }
             var a = json['a'];
-            $('#question').text(q);
-            $('#secqaa').val(a);
+            $('#question_'+name).text(q);
+            $('#secqaa_'+name).val(a);
         });
-    });
-    $('#submit').click(function(){
-        var seccode = $('#seccode').val();
-        var secqaa = $('#secqaa').val();
-        ONERING.post('/data/send/bbs.hefei.cc', {seccode:seccode, secqaa:secqaa, title:$("#title").text(), content:$("#content").text()}, function(json) {
-            var data = json['name'];
-            $('#result').text("文章URL地址:" + data);
-        }, "json");
-    });
+        $('#submit_'+name).click(function(){
+            var seccode = $('#seccode_'+name).val();
+            var secqaa = $('#secqaa_'+name).val();
+            ONERING.post('/data/send/'+sitename, 
+            {seccode:seccode, secqaa:secqaa, title:$("#title").text(), content:$("#content").text()}, 
+            function(json) {
+                var data = json['name'];
+                var label = $('<label></label>').text("文章URL地址:");
+                var link = $('<a></a>').attr('href',data).attr('target','_blank').text(data);
+                $('#result_'+name).append(label).append(link);
+            }, "json");
+        });
+    }
 </script>
