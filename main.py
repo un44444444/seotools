@@ -120,7 +120,7 @@ class filelist:
 class data_filelist:
 	@jsonize
 	def GET(self):
-		path = 'R:/'
+		path = 'D:/seo_articles/'
 		file_list = []
 		for file_name in os.listdir(path):
 			if fnmatch.fnmatch( file_name, '*.txt' ):
