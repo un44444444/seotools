@@ -10,36 +10,28 @@
   <p><pre id="content"></pre></p>
 </div>
 <div>
+% for website in websites:
+<%
+	shortname = website.replace('.','')
+%>
 <fieldset>
-<legend>bbs.55bbs.com</legend>
-<form name="bbs.55bbs.com" action="" method="POST">
-	验证码：<img id="secimage_bbs55bbscom" src="" /><br/>
-	<label for="seccode_bbs55bbscom">输入验证码：</label>
-	<input type="text" id="seccode_bbs55bbscom" value="" />
-	<button id="check_bbs55bbscom">校验验证码</button><br/>
-	<label id="sec_qaa_bbs55bbscom">
-	<label id="question_bbs55bbscom" for="secqaa_bbs55bbscom"></label>
-	<input type="text" id="secqaa_bbs55bbscom" value="" />
-	</label><br/>
-	<button id="submit_bbs55bbscom">提交</button>
-	<div id="result_bbs55bbscom"></div>
+<legend>${website}</legend>
+<form name="${website}" action="" method="POST">
+<div id="block_secimage_${shortname}">
+	<label for="secimage_${shortname}">验证码：</label>
+	<img id="secimage_${shortname}" src="" /><br/>
+	<label for="seccode_${shortname}">输入验证码：</label>
+	<input type="text" id="seccode_${shortname}" value="" />
+</div><br/>
+<div id="block_secqaa_${shortname}">
+	<label id="question_${shortname}" for="secqaa_${shortname}"></label>
+	<input type="text" id="secqaa_${shortname}" value="" />
+</div><br/>
+	<button id="submit_${shortname}">提交</button>
+	<div id="result_${shortname}"></div>
 </form>
 </fieldset>
-<fieldset>
-<legend>bbs.hefei.cc</legend>
-<form name="bbs.hefei.cc" action="" method="POST">
-	验证码：<img id="secimage_bbshefeicc" src="" /><br/>
-	<label for="seccode_bbshefeicc">输入验证码：</label>
-	<input type="text" id="seccode_bbshefeicc" value="" />
-	<button id="check_bbshefeicc">校验验证码</button><br/>
-	<label id="sec_qaa_bbshefeicc">
-	<label id="question_bbshefeicc" for="secqaa_bbshefeicc"></label>
-	<input type="text" id="secqaa_bbshefeicc" value="" />
-	</label><br/>
-	<button id="submit_bbshefeicc">提交</button>
-	<div id="result_bbshefeicc"></div>
-</form>
-</fieldset>
+% endfor
 </div>
 
 <script>
@@ -61,13 +53,18 @@
         var name = sitename.replace(/\./g,'');
         ONERING.getJSON('/data/seccode/'+sitename, function(json) {
             var data = json['name'];
+            if (/^\s*$/.test(data))
+            {
+            	$('#block_secimage_'+name).hide();
+            	return;
+            }
             $('#secimage_'+name).attr("src", "/static/secimage/"+sitename+"_" + data);
         });
         ONERING.getJSON('/data/secqaa/'+sitename, function(json) {
             var q = json['q'];
             if (/^\s*$/.test(q))
             {
-            	$('#sec_qaa_'+name).hide();
+            	$('#block_secqaa_'+name).hide();
             	return;
             }
             if (/^.*\.png$/.test(q))

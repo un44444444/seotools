@@ -22,6 +22,8 @@ import onering
 from filemgr import FileMgr
 from website import WebsitesMgr
 
+FILE_DIR = 'D:/seo_articles/'
+
 urls = (
 	'/init', 'init',
 	'/', 'index',
@@ -74,7 +76,8 @@ class filemgr:
 
 class autosend:
 	def GET(self, filename):
-		return render.autosend(filename=filename)
+		websites = ['bbs.voc.com.cn']
+		return render.autosend(filename=filename, websites=websites)
 
 class data_seccode:
 #	def __init__(self):
@@ -120,9 +123,8 @@ class filelist:
 class data_filelist:
 	@jsonize
 	def GET(self):
-		path = 'D:/seo_articles/'
 		file_list = []
-		for file_name in os.listdir(path):
+		for file_name in os.listdir(FILE_DIR):
 			if fnmatch.fnmatch( file_name, '*.txt' ):
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
@@ -141,7 +143,7 @@ class data_file:
 		except:
 			pass
 		#
-		content = open('R:/%s' % filename, 'r').read()
+		content = open('%s%s' % (FILE_DIR,filename), 'r').read()
 		try:
 			content = content.decode('gbk').encode('utf-8')
 		except:

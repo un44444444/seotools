@@ -15,6 +15,8 @@ websites = {
 		'username': 'un44444444',
 		'password': '44444444',
 		'fid': 2,
+		'need_secimg': True,
+		'need_secqaa': False,
 	},
 	'bbs.55bbs.com':{
 		'model': 'discuz_600',
@@ -26,17 +28,30 @@ websites = {
 		'password': 'un44444444',
 		'fid': 30,
 		#'fid': 2,
+		'need_secimg': True,
+		'need_secqaa': False,
 	},
 	'bbs.hefei.cc':{
 		'model': 'discuz_610',
 		'url': 'http://bbs.hefei.cc/',
-		#'url': 'http://localhost/discuz_610/',
 		'image_base':'static/secimage/bbs.hefei.cc_',
 		'encoding':'gbk',
 		'username': 'un44444444',
 		'password': '44444444',
 		'fid': 34,
-		#'fid': 2,
+		'need_secimg': True,
+		'need_secqaa': True,
+	},
+	'bbs.voc.com.cn':{
+		'model': 'discuz_610',
+		'url': 'http://bbs.voc.com.cn/',
+		'image_base':'static/secimage/bbs.voc.com.cn_',
+		'encoding':'gbk',
+		'username': 'un44444444',
+		'password': 'un44444444',
+		'fid': 52,
+		'need_secimg': False,
+		'need_secqaa': False,
 	},
 }
 
@@ -49,9 +64,13 @@ class Website:
 		self.discuz.login(conf['username'], conf['password'])
 	
 	def getSecimage(self):
+		if not self.discuz.conf['need_secimg']:
+			return ''
 		return self.discuz.getSeccode(self.fid)
 	
 	def getSecqaa(self):
+		if not self.discuz.conf['need_secqaa']:
+			return ('','')
 		if hasattr(self.discuz,'getSecqaa'):
 			return self.discuz.getSecqaa(self.fid)
 		else:
