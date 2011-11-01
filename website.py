@@ -53,6 +53,17 @@ websites = {
 		'need_secimg': False,
 		'need_secqaa': False,
 	},
+	'bbs.66163.com':{
+		'model': 'discuz_x2',
+		'url': 'http://bbs.66163.com/',
+		'image_base':'static/secimage/bbs.66163.com_',
+		'encoding':'gbk',
+		'username': 'un44444444',
+		'password': '44444444',
+		'fid': 27,
+		'need_secimg': True,
+		'need_secqaa': False,
+	},
 }
 
 class Website:

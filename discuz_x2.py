@@ -5,11 +5,11 @@
 import string
 import urllib2
 import re
-from discuz import Discuz
+from discuz import DiscuzBase
 
-class DiscuzX2(Discuz):
+class Discuz(DiscuzBase):
 	def __init__(self, param):
-		Discuz.__init__(self)
+		DiscuzBase.__init__(self)
 		#
 		self.conf = {
 			'url':'http://localhost/discuz/',
@@ -40,8 +40,12 @@ class DiscuzX2(Discuz):
 		self.action_preparepost = self.url + self.conf['action_preparepost'].substitute(fid=fid)
 		content = self.request_get(self.action_preparepost)
 		#print content.decode()
+		error_message = self.get_error_message(content)
+		if error_message:
+			print error_message
+			return error_message
+		#
 		try:
-			self._getResultInfo(content)
 			str_re='<input\s*type="hidden"\s*name="formhash"\s*id="formhash"\s*value="(.*?)"\s*\/>'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(content)
@@ -71,8 +75,12 @@ class DiscuzX2(Discuz):
 		action_seccode = self.url + self.conf['action_seccode'].substitute(sechash=self.sechash)
 		content = self.request_get(action_seccode)
 		#print content
+		error_message = self.get_error_message(content)
+		if error_message:
+			print error_message
+			return error_message
+		#
 		try:
-			self._getResultInfo(content)
 			str_re='<img\s*.*\s*src="(.*?)"\s*.*\/>'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(content)

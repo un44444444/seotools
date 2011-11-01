@@ -76,18 +76,11 @@ class filemgr:
 
 class autosend:
 	def GET(self, filename):
-		websites = ['bbs.voc.com.cn']
+		websites = ['bbs.66163.com',]
+		#websites = ['bbs.hefei.cc','bbs.voc.com.cn','bbs.66163.com']
 		return render.autosend(filename=filename, websites=websites)
 
 class data_seccode:
-#	def __init__(self):
-#		param = {
-#			'url':'http://localhost/discuz/',
-#			'image_base':'static/secimage/',
-#		}
-#		self.discuz = WebsitesMgr.getInst(param)
-#		self.fid = 2
-#	
 	@jsonize
 	def GET(self, website):
 		site = WebsitesMgr.getInst(website)

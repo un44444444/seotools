@@ -6,7 +6,7 @@ import urllib,urllib2
 import re,time
 import opener
 
-class Discuz:
+class DiscuzBase:
 	def __init__(self):
 		#self.opener = opener.getOpenerWithCookie()
 		opener.installOpenerWithCookie()
@@ -62,9 +62,9 @@ class Discuz:
 		return content
 
 	def post_then_fetch_url(self, action, data, referer='', retry_count=5):
-		req=urllib2.Request(action,urllib.urlencode(data))
+		request=urllib2.Request(action,urllib.urlencode(data))
 		if referer:
-			req.add_header('Referer', referer)
+			request.add_header('Referer', referer)
 		content = ""
 		err_count = 0
 		flage = True
@@ -82,7 +82,7 @@ class Discuz:
 				#
 				url=response.geturl()
 				print url
-				if url != action_post:
+				if url != action:
 					return url
 				#
 				content=response.read()

@@ -1,15 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#Filename: discuz.py
+#Filename: discuz_610.py
 
 import string
 import urllib2
 import re,time
-from discuz import Discuz
+from discuz import DiscuzBase
 
-class Discuz610(Discuz):
+class Discuz(DiscuzBase):
 	def __init__(self, param):
-		Discuz.__init__(self)
+		DiscuzBase.__init__(self)
 		#
 		self.conf = {
 			'url':'http://localhost/discuz_610/',
@@ -39,8 +39,12 @@ class Discuz610(Discuz):
 		self.action_preparepost = self.url + self.conf['action_preparepost'].substitute(fid=fid)
 		content = self.request_get(self.action_preparepost)
 		#print content.decode()
+		error_message = self.get_error_message(content)
+		if error_message:
+			print error_message
+			return error_message
+		#
 		try:
-			self._getResultInfo(content)
 			str_re='<input\s*type="hidden"\s*name="formhash"\s*id="formhash"\s*value="(.*?)"\s*\/>'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(content)
@@ -61,8 +65,12 @@ class Discuz610(Discuz):
 		action_secqaa = self.url + self.conf['action_secqaa'].substitute()
 		content = self.request_get(action_secqaa)
 		#print content
+		error_message = self.get_error_message(content)
+		if error_message:
+			print error_message
+			return error_message
+		#
 		try:
-			self._getResultInfo(content)
 			str_re='<root><!\[CDATA\[(.*?)\]\]></root>'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(content)
@@ -117,8 +125,12 @@ class Discuz610(Discuz):
 		action_seccode = self.url + self.conf['action_seccode'].substitute()
 		content = self.request_get(action_seccode)
 		#print content
+		error_message = self.get_error_message(content)
+		if error_message:
+			print error_message
+			return error_message
+		#
 		try:
-			self._getResultInfo(content)
 			str_re='<img\s*.*\s*src="(.*?)"\s*.*\/>'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(content)
@@ -176,11 +188,11 @@ class Discuz610(Discuz):
 if __name__ == "__main__":
 #	try:
 		param = {
-			'url':'http://bbs.voc.com.cn/',
+			'url':'http://bbs.hefei.cc/',
 		}
 		fid = 52
 		discuz = Discuz(param)
-		discuz.login('un44444444', 'un44444444')
+		discuz.login('un44444444', '44444444')
 		#exit()
 		#
 #		(q,a) = discuz.getSecqaa(fid)
