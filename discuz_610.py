@@ -3,14 +3,13 @@
 #Filename: discuz.py
 
 import string
-import urllib,urllib2
+import urllib2
 import re,time
-import opener
+from discuz import Discuz
 
-class Discuz:
+class Discuz610(Discuz):
 	def __init__(self, param):
-		#self.opener = opener.getOpenerWithCookie()
-		opener.installOpenerWithCookie()
+		Discuz.__init__(self)
 		#
 		self.conf = {
 			'url':'http://localhost/discuz_610/',
@@ -32,64 +31,13 @@ class Discuz:
 	def login(self,username,password):
 		logindata=(('loginfield','username'), ('username',username), ('password',password), ('loginsubmit','true'))
 		self.action_login = self.url + self.conf['action_login'].substitute()
-		req=urllib2.Request(self.action_login,urllib.urlencode(logindata))
-		if self.conf['action_login_referer']:
-			req.add_header('Referer', self.conf['action_login_referer'])
-		content = ""
-		err_count = 0
-		flage = True
-		while flage:
-			try:
-				u=urllib2.urlopen(req)
-				#u=self.opener.open(req)
-				content=u.read()
-				flage=False
-				self._getResultInfo(content)
-			except urllib2.HTTPError, e:
-				if err_count > 10:
-					exit(1)
-				err_count += 1
-				print e
-				flage = True
-				if e.getcode()== 403:
-					print "Wait for 5 minutes..."
-					time.sleep(5 * 60)
-
-		#print content
-		return content
-
-	def _getResultInfo(self,content):
-		p = re.compile('<div\s*id="messagetext"\s*class="alert_error"\s*>\s*<p>(.*?)\s*<script\s*')
-		m = p.findall(content)
-		if len(m) > 0:
-			for i in m:
-				print  i.replace('</p>','').decode(self.encoding,'ignore')
-			return m[0].replace('</p>','')
-		else:
-			return ''
+		content = self.request_post(self.action_login, logindata, self.conf['action_login_referer'])
+		error_message = self.get_error_message(content)
+		return error_message
 
 	def _preparePost(self,fid):
 		self.action_preparepost = self.url + self.conf['action_preparepost'].substitute(fid=fid)
-		request=urllib2.Request(self.action_preparepost)
-		content = ""
-		err_count = 0
-		flage = True
-		while flage:
-			try:
-				page=urllib2.urlopen(request)
-				#page=self.opener.open(request)
-				content=page.read()
-
-				flage=False
-			except urllib2.HTTPError, e:
-				if err_count > 10:
-					exit(1)
-				err_count += 1
-				print e
-				flage = True
-				if e.getcode() == 403:
-					print "Wait for 5 minutes..."
-					time.sleep(5 * 60)
+		content = self.request_get(self.action_preparepost)
 		#print content.decode()
 		try:
 			self._getResultInfo(content)
@@ -111,26 +59,7 @@ class Discuz:
 			self._preparePost(fid)
 		#
 		action_secqaa = self.url + self.conf['action_secqaa'].substitute()
-		request=urllib2.Request(action_secqaa)
-		content = ""
-		err_count = 0
-		flage = True
-		while flage:
-			try:
-				page=urllib2.urlopen(request)
-				#page=self.opener.open(request)
-				content=page.read()
-
-				flage=False
-			except urllib2.HTTPError, e:
-				if err_count > 10:
-					exit(1)
-				err_count += 1
-				print e
-				flage = True
-				if e.getcode() == 403:
-					print "Wait for 5 minutes..."
-					time.sleep(5 * 60)
+		content = self.request_get(action_secqaa)
 		#print content
 		try:
 			self._getResultInfo(content)
@@ -186,26 +115,7 @@ class Discuz:
 			self._preparePost(fid)
 		#
 		action_seccode = self.url + self.conf['action_seccode'].substitute()
-		request=urllib2.Request(action_seccode)
-		content = ""
-		err_count = 0
-		flage = True
-		while flage:
-			try:
-				page=urllib2.urlopen(request)
-				#page=self.opener.open(request)
-				content=page.read()
-
-				flage=False
-			except urllib2.HTTPError, e:
-				if err_count > 10:
-					exit(1)
-				err_count += 1
-				print e
-				flage = True
-				if e.getcode() == 403:
-					print "Wait for 5 minutes..."
-					time.sleep(5 * 60)
+		content = self.request_get(action_seccode)
 		#print content
 		try:
 			self._getResultInfo(content)
@@ -240,58 +150,27 @@ class Discuz:
 		if not self.formhash:
 			self._preparePost(fid)
 		postdata=[("formhash",self.formhash),("frombbs","1")]
+		self.formhash = ''
 		if seccode:
 			postdata.append(("seccodeverify",seccode))
 		if secqaa:
 			postdata.append(("secanswer",secqaa))
 		postdata.extend([("typeid","2"),("subject",title),("iconid","0"),("message",contents),("tag",""),("readperm","0"),("iconid","0"),("wysiwyg","1")])
-		params=urllib.urlencode(tuple(postdata),self.encoding)
-		#print params
-		self.formhash = ''
+		#print postdata
 		action_post = self.url + self.conf['action_post'].substitute(fid=fid)
-		request=urllib2.Request(action_post,params)
-		request.add_header('Referer', self.action_preparepost)
-		content = ""
-		err_count = 0
-		flage=True
-		while flage:
-			try:
-				response=urllib2.urlopen(request)
-				#
-				status_code=response.getcode()
-				print status_code
-				if status_code==301 or status_code==302:
-					http_message=response.info()
-					print http_message
-					content=http_message.getheader('location', 'can not find location')
-					return content
-				#
-				url=response.geturl()
-				print url
-				if url != action_post:
-					return url
-				#
-				content=response.read()
-				str_re='<br\s\/><br\s\/><a\shref="(.*?)">\['
-				reObj=re.compile(str_re)
-				allMatch=reObj.findall(content)
-				if len(allMatch) == 1:
-					return self.url + allMatch[0]
-				flage=False
-			except urllib2.HTTPError, e:
-				if err_count > 10:
-					exit(1)
-				err_count += 1
-				print e
-				flage = True
-				if e.getcode() == 403:
-					print "Wait for 5 minutes..."
-					time.sleep(5 * 60)
-		content = self._getResultInfo(content)
-		#f=open('test.html',"w")
-		#f.write(content)
-		#f.close()
-		return content
+		content = self.post_then_fetch_url(action_post,tuple(postdata),self.action_preparepost)
+		#
+		if len(content) < 128:
+			return content
+		#
+		str_re='<br\s\/><br\s\/><a\shref="(.*?)">\['
+		reObj=re.compile(str_re)
+		allMatch=reObj.findall(content)
+		if len(allMatch) == 1:
+			return self.url + allMatch[0]
+		#
+		error_msg = self.get_error_message(content)
+		return error_msg
 
 
 if __name__ == "__main__":

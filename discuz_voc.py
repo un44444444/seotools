@@ -6,6 +6,7 @@ import string
 import urllib,urllib2
 import re,time
 import opener
+import hashlib
 
 class Discuz:
 	def __init__(self, param):
@@ -28,8 +29,12 @@ class Discuz:
 		self.encoding = self.conf['encoding']
 		self.image_base = self.conf['image_base']
 		self.formhash = ''
+		self.username = ''
+		self.psw_md5 = ''
 
 	def login(self,username,password):
+		self.username = username
+		self.psw_md5 = hashlib.md5(password).hexdigest()
 		logindata=(('loginfield','username'), ('username',username), ('password',password), ('loginsubmit','true'))
 		self.action_login = self.url + self.conf['action_login'].substitute()
 		req=urllib2.Request(self.action_login,urllib.urlencode(logindata))
@@ -93,7 +98,7 @@ class Discuz:
 		#print content.decode()
 		try:
 			self._getResultInfo(content)
-			str_re='<input\s*type="hidden"\s*name="formhash"\s*id="formhash"\s*value="(.*?)"\s*\/>'
+			str_re='<input\s*type="hidden"\s*name="formhash"\s*id="formhash"\s*value="(.*?)"\s*\/?>'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(content)
 			self.formhash=allMatch[0]
@@ -244,7 +249,7 @@ class Discuz:
 			postdata.append(("seccodeverify",seccode))
 		if secqaa:
 			postdata.append(("secanswer",secqaa))
-		postdata.extend([("typeid","2"),("subject",title),("iconid","0"),("message",contents),("tag",""),("readperm","0"),("iconid","0"),("wysiwyg","1")])
+		postdata.extend([("typeid","2"),("subject",title),("iconid","0"),("username",self.username),("password",self.psw_md5),("message",contents),("tag",""),("readperm","0"),("iconid","0"),("wysiwyg","1")])
 		params=urllib.urlencode(tuple(postdata),self.encoding)
 		#print params
 		self.formhash = ''
