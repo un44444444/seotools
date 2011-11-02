@@ -5,6 +5,7 @@ import string
 from discuz_x2 import Discuz as discuz_x2
 from discuz_600 import Discuz as discuz_600
 from discuz_610 import Discuz as discuz_610
+from discuz_voc import Discuz as discuz_voc
 
 websites = {
 	'localhost':{
@@ -43,7 +44,7 @@ websites = {
 		'need_secqaa': True,
 	},
 	'bbs.voc.com.cn':{
-		'model': 'discuz_610',
+		'model': 'discuz_voc',
 		'url': 'http://bbs.voc.com.cn/',
 		'image_base':'static/secimage/bbs.voc.com.cn_',
 		'encoding':'gbk',
@@ -105,9 +106,11 @@ class WebsitesMgr:
 	
 	@staticmethod
 	def getInst(name):
-		if not WebsitesMgr.__inst.has_key(name):
-			WebsitesMgr.__inst[name] = Website(name)
-		return WebsitesMgr.__inst[name]
+		if WebsitesMgr.__inst.has_key(name):
+			return WebsitesMgr.__inst[name]
+		website = Website(name)
+		WebsitesMgr.__inst[name] = website
+		return website
 
 if __name__ == '__main__':
 	pass

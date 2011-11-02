@@ -8,8 +8,9 @@ import opener
 
 class DiscuzBase:
 	def __init__(self):
-		#self.opener = opener.getOpenerWithCookie()
-		opener.installOpenerWithCookie()
+		opener_obj = opener.getOpener('localhost', 'un44444444')
+		self.opener = opener_obj
+		#opener.installOpenerWithCookie()
 
 	def request_get(self, action, referer='', retry_count=5):
 		req=urllib2.Request(action)
@@ -20,8 +21,8 @@ class DiscuzBase:
 		flage = True
 		while flage:
 			try:
-				u=urllib2.urlopen(req)
-				#u=self.opener.open(req)
+				#u=urllib2.urlopen(req)
+				u=self.opener.open(req)
 				content=u.read()
 				flage=False
 			except urllib2.HTTPError, e:
@@ -45,8 +46,8 @@ class DiscuzBase:
 		flage = True
 		while flage:
 			try:
-				u=urllib2.urlopen(req)
-				#u=self.opener.open(req)
+				#u=urllib2.urlopen(req)
+				u=self.opener.open(req)
 				content=u.read()
 				flage=False
 			except urllib2.HTTPError, e:
