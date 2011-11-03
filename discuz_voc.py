@@ -3,15 +3,12 @@
 #Filename: discuz_voc.py
 
 import string
-#import urllib2
 import re
 import hashlib
 from discuz import DiscuzBase
 
 class Discuz(DiscuzBase):
 	def __init__(self, param):
-		DiscuzBase.__init__(self)
-		#
 		self.conf = {
 			'url':'http://localhost/discuz_610/',
 			'encoding':'gbk',
@@ -24,6 +21,8 @@ class Discuz(DiscuzBase):
 			'action_seccode':string.Template('ajax.php?action=updateseccode&inajax=1'),
 		}
 		self.conf.update(param)
+		#
+		DiscuzBase.__init__(self)
 		self.url = self.conf['url']
 		self.encoding = self.conf['encoding']
 		self.image_base = self.conf['image_base']
@@ -94,10 +93,11 @@ if __name__ == "__main__":
 #	try:
 		param = {
 			'url':'http://bbs.voc.com.cn/',
+			'username':'un44444444',
 		}
 		fid = 52
 		discuz = Discuz(param)
-		discuz.login('un44444444', 'un44444444')
+		discuz.login(param['username'], 'un44444444')
 		#
 		title = u'云计算'.encode('gbk','ignore');
 		content = u'中国一留学生去美国打工的当过报童，不带计算器，习惯动作抬头望天时心算找零。顾客大为惊讶，纷纷掏出计算器验证，皆无误，也抬头望天，惊恐问：“云计算？'.encode('gbk','ignore')

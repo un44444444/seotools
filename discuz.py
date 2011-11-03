@@ -8,8 +8,8 @@ import opener
 
 class DiscuzBase:
 	def __init__(self):
-		opener_obj = opener.getOpener('localhost', 'un44444444')
-		self.opener = opener_obj
+		conf = self.conf
+		self.opener = opener.getOpener(conf['url'], conf['username'])
 		#opener.installOpenerWithCookie()
 
 	def request_get(self, action, referer='', retry_count=5):
@@ -37,6 +37,15 @@ class DiscuzBase:
 		#return content
 		return content
 
+	def request_get_simple(self, action, referer=''):
+		req=urllib2.Request(action)
+		if referer:
+			req.add_header('Referer', referer)
+		#u=urllib2.urlopen(req)
+		u=self.opener.open(req)
+		content=u.read()
+		return content
+
 	def request_post(self, action, data, referer='', retry_count=5):
 		req=urllib2.Request(action,urllib.urlencode(data))
 		if referer:
@@ -60,6 +69,15 @@ class DiscuzBase:
 					print "Wait for 5 minutes..."
 					time.sleep(5 * 60)
 		#return content
+		return content
+
+	def request_post_simple(self, action, data, referer=''):
+		req=urllib2.Request(action,urllib.urlencode(data))
+		if referer:
+			req.add_header('Referer', referer)
+		#u=urllib2.urlopen(req)
+		u=self.opener.open(req)
+		content=u.read()
 		return content
 
 	def post_then_fetch_url(self, action, data, referer='', retry_count=5):

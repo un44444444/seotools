@@ -28,7 +28,7 @@ class OpenerManager:
 		self.dict = {}
 	
 	def get_openner(self, site, user):
-		host = 'localhost'
+		host = site[7:].split('/')[0]
 		key = (host, user)
 		if self.dict.has_key(key):
 			return self.dict[key]

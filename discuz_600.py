@@ -3,15 +3,12 @@
 #Filename: discuz_600.py
 
 import string
-#import urllib2
 import re
 import random
 from discuz import DiscuzBase
 
 class Discuz(DiscuzBase):
 	def __init__(self, param):
-		DiscuzBase.__init__(self)
-		#
 		self.conf = {
 			'url':'http://localhost/discuz_600/',
 			'encoding':'gbk',
@@ -23,6 +20,8 @@ class Discuz(DiscuzBase):
 			'action_seccode':string.Template('seccode.php?update=0.${randstr}'),
 		}
 		self.conf.update(param)
+		#
+		DiscuzBase.__init__(self)
 		self.url = self.conf['url']
 		self.encoding = self.conf['encoding']
 		self.image_base = self.conf['image_base']
@@ -104,10 +103,11 @@ if __name__ == "__main__":
 #	try:
 		param = {
 			'url':'http://bbs.55bbs.com/',
+			'username':'un44444444',
 		}
 		fid = 30
 		discuz = Discuz(param)
-		discuz.login('un44444444', 'un44444444')
+		discuz.login(param['username'], 'un44444444')
 		#exit()
 		#
 		local_file = discuz.getSeccode(fid)

@@ -3,14 +3,11 @@
 #Filename: discuz_x2.py
 
 import string
-import urllib2
 import re
 from discuz import DiscuzBase
 
 class Discuz(DiscuzBase):
 	def __init__(self, param):
-		DiscuzBase.__init__(self)
-		#
 		self.conf = {
 			'url':'http://localhost/discuz/',
 			'encoding':'gbk',
@@ -22,6 +19,8 @@ class Discuz(DiscuzBase):
 			'action_seccode':string.Template('misc.php?mod=seccode&action=update&idhash=${sechash}&inajax=1&ajaxtarget=seccode_${sechash}'),
 		}
 		self.conf.update(param)
+		#
+		DiscuzBase.__init__(self)
 		self.url = self.conf['url']
 		self.encoding = self.conf['encoding']
 		self.image_base = self.conf['image_base']
@@ -98,9 +97,7 @@ class Discuz(DiscuzBase):
 		#download imgage to local
 		remote_img = self.url + img_src
 		print remote_img
-		req = urllib2.Request(remote_img)
-		req.add_header('Referer', self.action_preparepost)
-		data = urllib2.urlopen(req).read()
+		data = self.request_get_simple(remote_img, self.action_preparepost)
 		file_name = 'secimage_'+self.sechash+'_'+img_update+'.png'
 		f = open(self.image_base + file_name,"wb")
 		f.write(data)
@@ -133,6 +130,7 @@ if __name__ == "__main__":
 #	try:
 		param = {
 			'url':'http://localhost/discuz/',
+			'username':'un44444444',
 		}
 		fid = 2
 		discuz = Discuz(param)
@@ -143,7 +141,7 @@ if __name__ == "__main__":
 #		server = info.getheader('Server', '')
 #		print server
 #		exit()
-		discuz.login('un44444444', '44444444')
+		discuz.login(param['username'], '44444444')
 		#
 		local_file = discuz.getSeccode(fid)
 		print local_file

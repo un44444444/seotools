@@ -3,14 +3,11 @@
 #Filename: discuz_610.py
 
 import string
-import urllib2
 import re,time
 from discuz import DiscuzBase
 
 class Discuz(DiscuzBase):
 	def __init__(self, param):
-		DiscuzBase.__init__(self)
-		#
 		self.conf = {
 			'url':'http://localhost/discuz_610/',
 			'encoding':'gbk',
@@ -23,6 +20,8 @@ class Discuz(DiscuzBase):
 			'action_seccode':string.Template('ajax.php?action=updateseccode&inajax=1'),
 		}
 		self.conf.update(param)
+		#
+		DiscuzBase.__init__(self)
 		self.url = self.conf['url']
 		self.encoding = self.conf['encoding']
 		self.image_base = self.conf['image_base']
@@ -98,9 +97,7 @@ class Discuz(DiscuzBase):
 			#download imgage to local
 			remote_img = self.url + img_src
 			print remote_img
-			req = urllib2.Request(remote_img)
-			req.add_header('Referer', self.action_preparepost)
-			data = urllib2.urlopen(req).read()
+			data = self.request_get_simple(remote_img, self.action_preparepost)
 			file_name = 'checkimage'+str(time.time())+'.png'
 			f = open(self.image_base + file_name,"wb")
 			f.write(data)
@@ -148,9 +145,7 @@ class Discuz(DiscuzBase):
 		#download imgage to local
 		remote_img = self.url + img_src
 		print remote_img
-		req = urllib2.Request(remote_img)
-		req.add_header('Referer', self.action_preparepost)
-		data = urllib2.urlopen(req).read()
+		data = self.request_get_simple(remote_img, self.action_preparepost)
 		file_name = 'secimage_'+img_update+'.png'
 		f = open(self.image_base + file_name,"wb")
 		f.write(data)
@@ -189,10 +184,11 @@ if __name__ == "__main__":
 #	try:
 		param = {
 			'url':'http://bbs.hefei.cc/',
+			'username':'un44444444',
 		}
 		fid = 52
 		discuz = Discuz(param)
-		discuz.login('un44444444', '44444444')
+		discuz.login(param['username'], '44444444')
 		#exit()
 		#
 #		(q,a) = discuz.getSecqaa(fid)
