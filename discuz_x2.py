@@ -134,6 +134,7 @@ if __name__ == "__main__":
 		}
 		fid = 2
 		discuz = Discuz(param)
+		print "end"
 #		response = urllib2.urlopen('http://localhost/discuz/')
 #		info = response.info()
 #		print info
@@ -141,16 +142,16 @@ if __name__ == "__main__":
 #		server = info.getheader('Server', '')
 #		print server
 #		exit()
-		discuz.login(param['username'], '44444444')
-		#
-		local_file = discuz.getSeccode(fid)
-		print local_file
-		seccode = input("Input seccode from image:")
-		#
-		title = u'测试文章'.encode('gbk','ignore');
-		content = u'测试内容!测试内容!'.encode('gbk','ignore')
-		post_url = discuz.post(fid, title, content, seccode)
-		print post_url
+#		discuz.login(param['username'], '44444444')
+#		#
+#		local_file = discuz.getSeccode(fid)
+#		print local_file
+#		seccode = input("Input seccode from image:")
+#		#
+#		title = u'测试文章'.encode('gbk','ignore');
+#		content = u'测试内容!测试内容!'.encode('gbk','ignore')
+#		post_url = discuz.post(fid, title, content, seccode)
+#		print post_url
 #	except Exception,e:
 #		print 'Error'
 #		print e
