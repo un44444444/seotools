@@ -65,6 +65,17 @@ websites = {
 		'need_secimg': True,
 		'need_secqaa': False,
 	},
+	'bbs.hangzhou.com.cn':{
+		'model': 'discuz_x2',
+		'url': 'http://bbs.hangzhou.com.cn/',
+		'image_base':'static/secimage/bbs.hangzhou.com.cn_',
+		'encoding':'gbk',
+		'username': 'un44444444',
+		'password': '44444444',
+		'fid': 201,
+		'need_secimg': False,
+		'need_secqaa': False,
+	},
 }
 
 class Website:

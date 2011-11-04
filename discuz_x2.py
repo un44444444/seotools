@@ -58,7 +58,8 @@ class Discuz(DiscuzBase):
 			str_re='onclick="updateseccode\(\'(.*?)\'\);doane\(event\);"'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(content)
-			self.sechash=allMatch[0]
+			if len(allMatch) > 0:
+				self.sechash=allMatch[0]
 			#print sechash
 		except Exception,e:
 			print e
@@ -108,8 +109,10 @@ class Discuz(DiscuzBase):
 		""""post content"""
 		if not self.formhash:
 			self._preparePost(fid)
-		postdata=[("formhash",self.formhash),("posttime",self.posttime),("wysiwyg","1"),("subject",title),("message",contents),("sechash",self.sechash)]
+		postdata=[("formhash",self.formhash),("posttime",self.posttime),("wysiwyg","1"),("subject",title),("message",contents)]
 		self.formhash = ''
+		if self.sechash:
+			postdata.append(("sechash",self.sechash))
 		if seccode:
 			postdata.append(("seccodeverify",seccode))
 		if secqaa:
@@ -134,7 +137,6 @@ if __name__ == "__main__":
 		}
 		fid = 2
 		discuz = Discuz(param)
-		print "end"
 #		response = urllib2.urlopen('http://localhost/discuz/')
 #		info = response.info()
 #		print info
@@ -142,7 +144,8 @@ if __name__ == "__main__":
 #		server = info.getheader('Server', '')
 #		print server
 #		exit()
-#		discuz.login(param['username'], '44444444')
+		discuz.login(param['username'], '44444444')
+		print "end"
 #		#
 #		local_file = discuz.getSeccode(fid)
 #		print local_file

@@ -76,8 +76,8 @@ class filemgr:
 
 class autosend:
 	def GET(self, filename):
-		websites = ['bbs.66163.com',]
-		#websites = ['bbs.hefei.cc','bbs.voc.com.cn','bbs.66163.com']
+		websites = ['bbs.hangzhou.com.cn',]
+		#websites = ['bbs.hefei.cc','bbs.voc.com.cn','bbs.66163.com','bbs.hangzhou.com.cn']
 		return render.autosend(filename=filename, websites=websites)
 
 class data_seccode:

@@ -46,6 +46,8 @@ class OpenerManager:
 			(cookie, opener) = value
 			print cookie
 			print opener
+			value = cookie.as_lwp_str(False);
+			print value
 			cookie.save(filename)
 
 opener_mgr = OpenerManager()
