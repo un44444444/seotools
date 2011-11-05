@@ -117,6 +117,8 @@ class Discuz(DiscuzBase):
 			postdata.append(("seccodeverify",seccode))
 		if secqaa:
 			postdata.append(("secanswer",secqaa))
+		if self.conf['post_extra']:
+			postdata.extend(self.conf['post_extra'])
 		#print postdata
 		action_post = self.url + self.conf['action_post'].substitute(fid=fid)
 		content = self.post_then_fetch_url(action_post,tuple(postdata),self.action_preparepost)

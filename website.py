@@ -75,6 +75,7 @@ websites = {
 		'fid': 201,
 		'need_secimg': False,
 		'need_secqaa': False,
+		'post_extra': [('typeid','60')],
 	},
 }
 

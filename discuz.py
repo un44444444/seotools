@@ -89,7 +89,8 @@ class DiscuzBase:
 		flage = True
 		while flage:
 			try:
-				response=urllib2.urlopen(request)
+				#response=urllib2.urlopen(request)
+				response=self.opener.open(request)
 				#
 				status_code=response.getcode()
 				print status_code
