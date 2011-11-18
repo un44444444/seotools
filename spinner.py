@@ -26,6 +26,7 @@ if __name__ == '__main__':
 				result[idx]=j
 			idx+=1
 		#print result
+		print 'begin ID=%d' % result[0]
 		
 		#title
 		time.sleep(1)
