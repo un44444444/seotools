@@ -34,6 +34,9 @@ if __name__ == '__main__':
 		if title == 'except':
 			print "title except"
 			continue
+		elif title == 'error=You have reached the daily limit!':
+			print "title return(%s)"%title
+			break
 		print result[1]
 		print title
 		
@@ -43,6 +46,9 @@ if __name__ == '__main__':
 		if content == 'except':
 			print "content except"
 			continue
+		elif content == 'error=You have reached the daily limit!':
+			print "content return(%s)"%content
+			break
 		#print result[2]
 		#print content
 		
