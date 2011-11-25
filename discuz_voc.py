@@ -92,7 +92,7 @@ class Discuz(DiscuzBase):
 if __name__ == "__main__":
 #	try:
 		param = {
-			'url':'http://bbs.voc.com.cn/',
+			'url':'http://localhost/discuz_voc/',
 			'username':'un44444444',
 		}
 		fid = 52

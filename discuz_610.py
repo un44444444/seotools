@@ -183,7 +183,7 @@ class Discuz(DiscuzBase):
 if __name__ == "__main__":
 #	try:
 		param = {
-			'url':'http://bbs.hefei.cc/',
+			'url':'http://localhost/discuz_610/',
 			'username':'un44444444',
 		}
 		fid = 52

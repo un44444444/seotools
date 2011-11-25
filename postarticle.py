@@ -4,7 +4,7 @@
 
 import os
 import fnmatch,sys
-from discuz import Discuz
+from discuz_x2 import Discuz
 
 def postContentByPart(discuz,fileName,contents):
 			initsize=900
