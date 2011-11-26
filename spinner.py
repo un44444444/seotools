@@ -14,7 +14,7 @@ if __name__ == '__main__':
 	db = mdb.AdoMdb()
 	db.OpenDataBase('R:/SpiderResult.mdb')
 	#
-	resultset = db.ExecuteQuery(u'select ID,标题,内容 from content WHERE spin=0', 500)
+	resultset = db.ExecuteQuery(u'select ID,标题,内容 from content WHERE spin=0 AND 已采<>0', 500)
 	for record in resultset:
 		result=[0,'','']
 		idx = 0
