@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # encoding: UTF-8
 
+def filt_out_non_ascii(s):
+	return ''.join(c for c in s if c<chr(128))
+
 def addslashes(s):
 	#d = {"'":"\\'", "\0":"\\\0", "\\":"\\\\"}
 	d = {"'":"''"}
-	return ''.join(d.get(c, c) for c in s if c<chr(128))
+	return ''.join(d.get(c, c) for c in s)
 
 if __name__ == '__main__':
 	import time
@@ -20,8 +23,8 @@ if __name__ == '__main__':
 		idx = 0
 		for j in record:
 			if isinstance(j, unicode):
-				#result[idx]=j.encode('cp936')
-				result[idx]=j
+				result[idx]=j.encode('utf8')
+				result[idx]=filt_out_non_ascii(result[idx])
 			else:
 				result[idx]=j
 			idx+=1

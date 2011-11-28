@@ -42,7 +42,7 @@ class Poster:
 		while flage:
 			try:
 				req=urllib2.Request(action,data)
-				resp=urllib2.urlopen(req, timeout=15)
+				resp=urllib2.urlopen(req, timeout=20)
 				content=resp.read()
 				flage=False
 				return content
@@ -50,8 +50,8 @@ class Poster:
 				if err_count >= retry_count:
 					break
 				err_count += 1
-				print "Wait for 5 seconds..."
-				time.sleep(5)
+				print "Wait for 2 seconds..."
+				time.sleep(2)
 		#
 		return 'except'
 	
