@@ -7,7 +7,7 @@ def filt_out_non_ascii(s):
 def addslashes(s):
 	#d = {"'":"\\'", "\0":"\\\0", "\\":"\\\\"}
 	d = {"'":"''"}
-	return ''.join(d.get(c, c) for c in s)
+	return ''.join(d.get(c, c) for c in s if c<chr(128))
 
 if __name__ == '__main__':
 	import time
