@@ -90,7 +90,7 @@ class GetLinkWeight:
 	
 if __name__ == '__main__':
 	poster = GetLinkWeight()
-	poster.login('un'+'44444444%%40163'+'.com', '4444'+'4444')
+	poster.login('un'+'44444444%40163'+'.com', '4444'+'4444')
 	poster.deal_file('R:')
 #	result = poster.get_weight('www.10086.cn')
 #	print result
