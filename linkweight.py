@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # encoding: UTF-8
 
-import urllib2
-import re
-import time
+import urllib2,urllib
+import re,time
+import opener
 
 class GetLinkWeight:
 	def __init__(self):
 		self.site_base = 'http://www.ai' + 'zhan.com'
 		self.site_baidu = self.site_base + '/baidu'
+		self.opener = opener.getOpener(self.site_base, 'un44444444@163.com')
 		
 	def get_weight(self, link):
 		main_page = self.site_baidu+'/'+link+'/position/'
@@ -45,24 +46,22 @@ class GetLinkWeight:
 		#
 		return (weight,src1,src2,words,total_sum,week_count,day_count)
 	
-	@staticmethod
-	def _get_data(action, referer):
+	def _get_data(self, action, referer):
 		try:
 			req=urllib2.Request(action)
 			req.add_header('Referer', referer)
-			resp=urllib2.urlopen(req)
+			resp=self.opener.open(req)
 			content=resp.read()
 			return content
 		except:
 			return 'except'
 	
-	@staticmethod
-	def _get_data2(action, referer):
+	def _get_data2(self, action, referer):
 		try:
 			req=urllib2.Request(action)
 			req.add_header('Referer', referer)
 			req.add_header('X-Requested-With', 'XMLHttpRequest')
-			resp=urllib2.urlopen(req)
+			resp=self.opener.open(req)
 			content=resp.read()
 			return content
 		except:
@@ -80,8 +79,18 @@ class GetLinkWeight:
 			output.write('\t'.join(result) + '\n')
 			output.flush()
 	
+	def login(self, email, word):
+		data=(('r',''), ('email',email), ('pass'+'word',word))
+		action_login = self.site_base + '/login.php'
+		req=urllib2.Request(action_login,urllib.urlencode(data))
+		req.add_header('Referer', action_login)
+		u=self.opener.open(req)
+		content=u.read()
+		return content
+	
 if __name__ == '__main__':
 	poster = GetLinkWeight()
+	poster.login('un'+'44444444%%40163'+'.com', '4444'+'4444')
 	poster.deal_file('R:')
 #	result = poster.get_weight('www.10086.cn')
 #	print result
