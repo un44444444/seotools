@@ -67,9 +67,9 @@ class GetLinkWeight:
 		except:
 			return 'except'
 	
-	def deal_file(self, dir):
-		f=open(dir+'/input.txt')
-		output=open(dir+'/output.txt', 'w')
+	def deal_file(self, in_file, out_file):
+		f=open(in_file)
+		output=open(out_file, 'w')
 		lines=f.readlines()
 		for line in lines:
 			link=line.split('\t')[0]
@@ -91,6 +91,6 @@ class GetLinkWeight:
 if __name__ == '__main__':
 	poster = GetLinkWeight()
 	poster.login('un'+'44444444%40163'+'.com', '4444'+'4444')
-	poster.deal_file('R:')
+	poster.deal_file('R:/input.txt', 'R:/output.txt')
 #	result = poster.get_weight('www.10086.cn')
 #	print result

@@ -1,0 +1,56 @@
+<%inherit file="/page_base.html" />
+
+<%def name="page_name()">File List</%def>
+
+<div>可发布文章列表（D:\seo_articles\）：</div>
+<div id="tree"></div>
+
+<script>
+    $(document).ready(function(){
+        //$('#result').text("Getting data...");
+        ONERING.getJSON('/data/batchweight', function(json) {
+            //alert(allPrpos(json));
+            var filelist = json.files;
+            //alert(filelist);
+            var tree = document.getElementById("tree");
+            tree.appendChild(to_ul(filelist));
+        });
+    });
+function allPrpos(obj)
+{     
+    var props = "";
+    for(var p in obj)
+    { 
+       if(typeof(obj[p])=="function"){
+            props+= p + "=function(..)\r\n";
+        }else{
+            props+= p + "=" + obj[p]+"\r\n";
+        }
+    }
+    return props  ;    
+}
+function query_weight(filename){
+    ONERING.post('/batchweight/'+filename, '', function(json) {
+        alert(allPrpos(json));
+    }, "json");
+}
+function to_ul (filelist) {
+  // --------v create an <ul> element
+  var f, li, ul = document.createElement ("ul");
+  // --v loop through its children
+  for (f = 0; f < filelist.length; f++) {
+    li = document.createElement ("li");
+    link = document.createElement("a");
+    link.appendChild (document.createTextNode (filelist[f]));
+    li.appendChild (link)
+    li.appendChild (document.createTextNode(" | "));
+    a_send = document.createElement("a");
+    a_send.setAttribute("href", "#");
+    a_send.setAttribute("onclick", "javascript:query_weight('"+filelist[f]+"');");
+    a_send.appendChild (document.createTextNode("批量查询.."));
+    li.appendChild (a_send)
+    ul.appendChild (li);
+  }
+  return ul;
+}
+</script>

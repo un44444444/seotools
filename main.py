@@ -23,6 +23,7 @@ from filemgr import FileMgr
 from website import WebsitesMgr
 
 FILE_DIR = 'D:/seo_articles/'
+BATCH_WEIGHT_DIR = 'R:/'
 
 urls = (
 	'/init', 'init',
@@ -37,6 +38,9 @@ urls = (
 	'/data/secqaa/(.*)', 'data_secqaa',
 	'/filelist', 'filelist',
 	'/data/filelist', 'data_filelist',
+	'/batchweight', 'batchweight',
+	'/batchweight/(.*)', 'batchweight',
+	'/data/batchweight', 'data_batchweight',
 	'/file/(.*)', 'fileshow',
 	'/data/file/(.*)', 'data_file',
 )
@@ -77,7 +81,7 @@ class filemgr:
 class autosend:
 	def GET(self, filename):
 		#websites = ['bbs.hangzhou.com.cn',]
-		websites = ['bbs.hefei.cc','bbs.voc.com.cn','bbs.66163.com','bbs.hangzhou.com.cn']
+		websites = ['bbs.hef'+'ei.cc','bbs.vo'+'c.com.cn','bbs.66'+'163.com','bbs.hangzho'+'u.com.cn']
 		return render.autosend(filename=filename, websites=websites)
 
 class data_seccode:
@@ -118,6 +122,38 @@ class data_filelist:
 	def GET(self):
 		file_list = []
 		for file_name in os.listdir(FILE_DIR):
+			if fnmatch.fnmatch( file_name, '*.txt' ):
+				file_list.append(file_name.decode('gbk').encode('utf-8'))
+		return dict(files=file_list)
+
+class batchweight:
+	def GET(self):
+		return render.batchweight()
+	@jsonize
+	def POST(self, file):
+		out_file = file[:-4]+"_out.txt"
+		print "batchweight.POST(in="+BATCH_WEIGHT_DIR+file+", out="+BATCH_WEIGHT_DIR+out_file+")"
+		import linkweight
+		handler = linkweight.GetLinkWeight()
+		handler.login('un'+'44444444%40163'+'.com', '4444'+'4444')
+		handler.deal_file(BATCH_WEIGHT_DIR+file, BATCH_WEIGHT_DIR+out_file)
+		return dict(file=file)
+		i = web.input()
+		title = i.title
+		content = i.content
+		seccode = str(i.seccode)
+		secqaa = ''
+		if hasattr(i,'secqaa'):
+			secqaa = i.secqaa
+		site = WebsitesMgr.getInst(file)
+		url = site.postArctle(title, content, seccode, secqaa)
+		return dict(name=url)
+
+class data_batchweight:
+	@jsonize
+	def GET(self):
+		file_list = []
+		for file_name in os.listdir(BATCH_WEIGHT_DIR):
 			if fnmatch.fnmatch( file_name, '*.txt' ):
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
