@@ -131,11 +131,11 @@ class batchweight:
 		return render.batchweight()
 	@jsonize
 	def POST(self, file):
-		out_file = file[:-4]+"_out.txt"
+		out_file = file[:-4]+"_out.csv"
 		print "batchweight.POST(in="+BATCH_WEIGHT_DIR+file+", out="+BATCH_WEIGHT_DIR+out_file+")"
 		import linkweight
 		handler = linkweight.GetLinkWeight()
-		handler.login('un'+'44444444%40163'+'.com', '4444'+'4444')
+		handler.login('un4444'+'4444@163'+'.com', '4444'+'4444')
 		handler.deal_file(BATCH_WEIGHT_DIR+file, BATCH_WEIGHT_DIR+out_file)
 		return dict(file=file)
 		i = web.input()

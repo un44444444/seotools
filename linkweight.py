@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # encoding: UTF-8
 
-import urllib2,urllib
+import urllib2
 import re,time
 import opener
+import os
 
 class GetLinkWeight:
 	def __init__(self):
@@ -69,8 +70,21 @@ class GetLinkWeight:
 	
 	def deal_file(self, in_file, out_file):
 		f=open(in_file)
-		output=open(out_file, 'w')
+		tempfilename=in_file+'.seq'
+		output=None
 		lines=f.readlines()
+		dealed_count=0
+		# restart from last read
+		if os.path.isfile(tempfilename):
+			ftemp=open(tempfilename)
+			dealed_count=int(ftemp.read())
+			ftemp.close()
+		if dealed_count > 0:
+			lines=lines[dealed_count:]
+			output=open(out_file, 'a')
+		else:
+			output=open(out_file, 'w')
+		#
 		for line in lines:
 			link=line.split('\t')[0]
 			site = link[7:].split('/')[0]
@@ -78,11 +92,16 @@ class GetLinkWeight:
 			print result
 			output.write('\t'.join(result) + '\n')
 			output.flush()
+			dealed_count+=1
+			if dealed_count%10 == 0:
+				ftemp=open(tempfilename, 'w')
+				ftemp.write(str(dealed_count))
+				ftemp.close()
 	
 	def login(self, email, word):
-		data=(('r',''), ('email',email), ('pass'+'word',word))
+		data='r=&email=%s&password=%s' % (email,word)
 		action_login = self.site_base + '/login.php'
-		req=urllib2.Request(action_login,urllib.urlencode(data))
+		req=urllib2.Request(action_login,data)
 		req.add_header('Referer', action_login)
 		u=self.opener.open(req)
 		content=u.read()
@@ -90,7 +109,7 @@ class GetLinkWeight:
 	
 if __name__ == '__main__':
 	poster = GetLinkWeight()
-	poster.login('un'+'44444444%40163'+'.com', '4444'+'4444')
-	poster.deal_file('R:/input.txt', 'R:/output.txt')
+	poster.login('un'+'44444444@163'+'.com', '4444'+'4444')
+	poster.deal_file('R:/input.txt', 'R:/output.csv')
 #	result = poster.get_weight('www.10086.cn')
 #	print result
