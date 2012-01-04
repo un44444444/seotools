@@ -5,12 +5,14 @@ import urllib2
 import re,time
 import opener
 import os
+import threading
 
-class GetLinkWeight:
-	def __init__(self):
+class GetLinkWeight(threading.Thread):
+	def __init__(self, name='1'):
+		threading.Thread.__init__(self, name = name)
 		self.site_base = 'http://www.ai' + 'zhan.com'
 		self.site_baidu = self.site_base + '/baidu'
-		self.opener = opener.getOpener(self.site_base, 'un44444444@163.com')
+		self.opener = opener.getOpener(self.site_base, name)
 		
 	def get_weight(self, link):
 		main_page = self.site_baidu+'/'+link+'/position/'
@@ -70,33 +72,51 @@ class GetLinkWeight:
 	
 	def deal_file(self, in_file, out_file):
 		f=open(in_file)
-		tempfilename=in_file+'.seq'
+		tempfilename=in_file+'.offset'
 		output=None
-		lines=f.readlines()
-		dealed_count=0
+		last_offset=0
 		# restart from last read
 		if os.path.isfile(tempfilename):
 			ftemp=open(tempfilename)
-			dealed_count=int(ftemp.read())
+			last_offset=int(ftemp.read())
 			ftemp.close()
-		if dealed_count > 0:
-			lines=lines[dealed_count:]
+		if last_offset > 0:
+			f.seek(last_offset)
 			output=open(out_file, 'a')
 		else:
 			output=open(out_file, 'w')
-		#
-		for line in lines:
+		# deal
+		dealed_count=0
+		while True:
+			line=f.readline();
+			if not line:
+				break
 			link=line.split('\t')[0]
 			site = link[7:].split('/')[0]
 			result = self.get_weight(site)
 			print result
-			output.write('\t'.join(result) + '\n')
-			output.flush()
-			dealed_count+=1
+			if result[0] == 'NULL':
+				dealed_count=0
+			else:
+				output.write('\t'.join(result) + '\n')
+				dealed_count+=1
+				last_offset=f.tell()
+			# record result
 			if dealed_count%10 == 0:
 				ftemp=open(tempfilename, 'w')
-				ftemp.write(str(dealed_count))
+				ftemp.write(str(last_offset))
 				ftemp.close()
+				output.flush()
+			if dealed_count == 0:
+				print 'reach server limitation count'
+				break
+	
+	def prepare_file(self, in_file, out_file):
+		self.input_file=in_file
+		self.output_file=out_file
+	
+	def run(self):
+		return self.deal_file(self.input_file, self.output_file)
 	
 	def login(self, email, word):
 		data='r=&email=%s&password=%s' % (email,word)
@@ -108,8 +128,13 @@ class GetLinkWeight:
 		return content
 	
 if __name__ == '__main__':
-	poster = GetLinkWeight()
-	poster.login('un'+'44444444@163'+'.com', '4444'+'4444')
-	poster.deal_file('R:/input.txt', 'R:/output.csv')
+	poster = GetLinkWeight('23')
+	poster.login('un'+'44444444@yahoo'+'.com', '4444'+'4444')
+#	poster.deal_file('R:/input.txt', 'R:/output.csv')
+	poster.prepare_file('R:/input.txt', 'R:/output.csv')
+	print 'start thread..'
+	poster.start()
+	print 'wait thread complete ..'
+	poster.join()
 #	result = poster.get_weight('www.10086.cn')
 #	print result

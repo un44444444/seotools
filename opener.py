@@ -9,6 +9,7 @@ global_custom_opener_installed = False
 
 def newOpenerWithCookie(filename=None):
 	cookie = cookielib.LWPCookieJar(filename)
+	cookie.revert(filename)
 	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
 	agents = ["Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)","Internet Explorer 7 (Windows Vista); Mozilla/4.0 ","Google Chrome 0.2.149.29 (Windows XP)","Opera 9.25 (Windows Vista)","Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.1)","Opera/8.00 (Windows NT 5.1; U; en)"]
 	agent = random.choice(agents)
