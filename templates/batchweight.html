@@ -1,8 +1,8 @@
 <%inherit file="/page_base.html" />
 
-<%def name="page_name()">File List</%def>
+<%def name="page_name()">Batch Weight</%def>
 
-<div>可发布文章列表（D:\seo_articles\）：</div>
+<div>批量查询网站权重（${filedir}）：</div>
 <div id="tree"></div>
 
 <script>
@@ -29,10 +29,30 @@ function allPrpos(obj)
     }
     return props  ;    
 }
-function query_weight(filename){
+function query_weight(status_node, filename){
     ONERING.post('/batchweight/'+filename, '', function(json) {
-        alert(allPrpos(json));
+    	$('#'+status_node).text('开始处理文件：'+allPrpos(json));
     }, "json");
+    //
+    var timerid;
+    function query_status(){
+    	ONERING.getJSON('/batchweight/'+filename, function(json) {
+    		status=json.status;
+    		if (status<=0)
+    		{
+    			clearInterval(timerid);
+    			total_count=json.count1;
+    			dealed_count=json.count2;
+    			$('#'+status_node).text('处理完毕：当前已完成'+dealed_count+'/'+total_count+'。');
+    		}
+    		else
+    		{
+    			current_dealed_count=json.count1;
+    			$('#'+status_node).text('处理中：本次已处理'+current_dealed_count+'条。');
+    		}
+    	});
+    }
+    timerid = window.setInterval(query_status, 1000);
 }
 function to_ul (filelist) {
   // --------v create an <ul> element
@@ -46,10 +66,15 @@ function to_ul (filelist) {
     li.appendChild (document.createTextNode(" | "));
     a_send = document.createElement("a");
     a_send.setAttribute("href", "#");
-    a_send.setAttribute("onclick", "javascript:query_weight('"+filelist[f]+"');");
+    a_send.setAttribute("onclick", "javascript:query_weight('li_"+f+"', '"+filelist[f]+"');");
     a_send.appendChild (document.createTextNode("批量查询.."));
     li.appendChild (a_send)
     ul.appendChild (li);
+    //
+    li_status = document.createElement ("li");
+    li_status.setAttribute("id", "li_"+f);
+    li_status.appendChild (document.createTextNode("等待处理..."));
+    ul.appendChild (li_status);
   }
   return ul;
 }

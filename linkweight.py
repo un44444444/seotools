@@ -13,6 +13,8 @@ class GetLinkWeight(threading.Thread):
 		self.site_base = 'http://www.ai' + 'zhan.com'
 		self.site_baidu = self.site_base + '/baidu'
 		self.opener = opener.getOpener(self.site_base, name)
+		self.total_count = 0
+		self.status = 0
 		
 	def get_weight(self, link):
 		main_page = self.site_baidu+'/'+link+'/position/'
@@ -71,6 +73,7 @@ class GetLinkWeight(threading.Thread):
 			return 'except'
 	
 	def deal_file(self, in_file, out_file):
+		self.status = 1
 		f=open(in_file)
 		tempfilename=in_file+'.offset'
 		output=None
@@ -100,6 +103,7 @@ class GetLinkWeight(threading.Thread):
 			else:
 				output.write('\t'.join(result) + '\n')
 				dealed_count+=1
+				self.total_count+=1
 				last_offset=f.tell()
 			# record result
 			if dealed_count%10 == 0:
@@ -110,6 +114,7 @@ class GetLinkWeight(threading.Thread):
 			if dealed_count == 0:
 				print 'reach server limitation count'
 				break
+		self.status = 0
 	
 	def prepare_file(self, in_file, out_file):
 		self.input_file=in_file
@@ -117,6 +122,26 @@ class GetLinkWeight(threading.Thread):
 	
 	def run(self):
 		return self.deal_file(self.input_file, self.output_file)
+	
+	def get_status(self):
+		return self.status
+	def get_totalcount(self):
+		return self.total_count
+	def get_filecount(self):
+		#
+		infile_count=0
+		f=open(self.input_file)
+		lines=f.readlines()
+		infile_count=len(lines)
+		f.close
+		#
+		outfile_count=0
+		f=open(self.output_file)
+		lines=f.readlines()
+		outfile_count=len(lines)
+		f.close
+		#
+		return (infile_count,outfile_count)
 	
 	def login(self, email, word):
 		data='r=&email=%s&password=%s' % (email,word)
@@ -129,9 +154,9 @@ class GetLinkWeight(threading.Thread):
 	
 if __name__ == '__main__':
 	poster = GetLinkWeight('23')
+	poster.prepare_file('R:/input.txt', 'R:/output.csv')
 	poster.login('un'+'44444444@yahoo'+'.com', '4444'+'4444')
 #	poster.deal_file('R:/input.txt', 'R:/output.csv')
-	poster.prepare_file('R:/input.txt', 'R:/output.csv')
 	print 'start thread..'
 	poster.start()
 	print 'wait thread complete ..'

@@ -126,17 +126,38 @@ class data_filelist:
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
 
+filestat = {}
 class batchweight:
-	def GET(self):
-		return render.batchweight()
+	def GET(self, file=None):
+		if file is None:
+			return render.batchweight(filedir=BATCH_WEIGHT_DIR)
+		print "GET file="+file
+		print filestat
+		handler = filestat.get(file)
+		status = 0
+		count1 = 0
+		count2 = 0
+		if handler is not None:
+			status = handler.get_status()
+			if status>0:
+				count1=handler.get_totalcount()
+			else:
+				handler.join(0.01)
+				(count1,count2)=handler.get_filecount()
+		ret = dict(status=status,count1=count1,count2=count2)
+		web.header('Content-Type', 'application/json')
+		return json.dumps(ret)
 	@jsonize
 	def POST(self, file):
 		out_file = file[:-4]+"_out.csv"
 		print "batchweight.POST(in="+BATCH_WEIGHT_DIR+file+", out="+BATCH_WEIGHT_DIR+out_file+")"
 		import linkweight
 		handler = linkweight.GetLinkWeight()
-		handler.login('un4444'+'4444@163'+'.com', '4444'+'4444')
-		handler.deal_file(BATCH_WEIGHT_DIR+file, BATCH_WEIGHT_DIR+out_file)
+		handler.prepare_file(BATCH_WEIGHT_DIR+file, BATCH_WEIGHT_DIR+out_file)
+		handler.login('un4444'+'4444@tom'+'.com', '4444'+'4444')
+#		handler.deal_file(BATCH_WEIGHT_DIR+file, BATCH_WEIGHT_DIR+out_file)
+		handler.start()
+		filestat[file] = handler
 		return dict(file=file)
 		i = web.input()
 		title = i.title

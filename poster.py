@@ -13,6 +13,7 @@ class Poster:
 		host = ''.join(['http://api.','spinner','chief','.com'])
 		port = 8080
 		config = [
+				('4039a8ef565c4f5d8', ''.join(['un','4444','44441']), '444444441'),
 				('45a0a23babbd44729', ''.join(['un','4444','4444']), '44444444'),
 				('753a2d8b9995450e8', ''.join(['ray','mond','182']), '2198300')
 		]
@@ -33,6 +34,7 @@ class Poster:
 		return result
 	
 	def query_times(self):
+		print self.action_times
 		return self._post_data(self.action_times, '')
 	
 	@staticmethod
