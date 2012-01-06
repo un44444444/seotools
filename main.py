@@ -23,7 +23,7 @@ from filemgr import FileMgr
 from website import WebsitesMgr
 
 FILE_DIR = 'D:/seo_articles/'
-BATCH_WEIGHT_DIR = 'R:/'
+BATCH_WEIGHT_DIR = 'D:/link_weight/'
 
 urls = (
 	'/init', 'init',
@@ -151,24 +151,18 @@ class batchweight:
 	def POST(self, file):
 		out_file = file[:-4]+"_out.csv"
 		print "batchweight.POST(in="+BATCH_WEIGHT_DIR+file+", out="+BATCH_WEIGHT_DIR+out_file+")"
+		i = web.input()
+		email = i.email
+		passwd = i.passwd
+		print "batchweight.POST(email="+email+", passwd="+passwd+")"
 		import linkweight
-		handler = linkweight.GetLinkWeight()
+		handler = linkweight.GetLinkWeight(email)
 		handler.prepare_file(BATCH_WEIGHT_DIR+file, BATCH_WEIGHT_DIR+out_file)
-		handler.login('un4444'+'4444@tom'+'.com', '4444'+'4444')
-#		handler.deal_file(BATCH_WEIGHT_DIR+file, BATCH_WEIGHT_DIR+out_file)
+		if email and passwd:
+			handler.login(email, passwd)
 		handler.start()
 		filestat[file] = handler
 		return dict(file=file)
-		i = web.input()
-		title = i.title
-		content = i.content
-		seccode = str(i.seccode)
-		secqaa = ''
-		if hasattr(i,'secqaa'):
-			secqaa = i.secqaa
-		site = WebsitesMgr.getInst(file)
-		url = site.postArctle(title, content, seccode, secqaa)
-		return dict(name=url)
 
 class data_batchweight:
 	@jsonize

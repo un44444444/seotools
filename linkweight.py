@@ -8,7 +8,9 @@ import os
 import threading
 
 class GetLinkWeight(threading.Thread):
-	def __init__(self, name='1'):
+	def __init__(self, name=None):
+		if name is None or not name:
+			name = str(int(time.time()))
 		threading.Thread.__init__(self, name = name)
 		self.site_base = 'http://www.ai' + 'zhan.com'
 		self.site_baidu = self.site_base + '/baidu'
