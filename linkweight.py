@@ -6,6 +6,7 @@ import re,time
 import opener
 import os
 import threading
+import codecs
 
 class GetLinkWeight(threading.Thread):
 	def __init__(self, name=None):
@@ -77,6 +78,11 @@ class GetLinkWeight(threading.Thread):
 	def deal_file(self, in_file, out_file):
 		self.status = 1
 		f=open(in_file)
+		bom=f.read(3)
+		if bom==codecs.BOM_UTF8:
+			f.seek(3)
+		else:
+			f.seek(0)
 		tempfilename=in_file+'.offset'
 		output=None
 		last_offset=0
@@ -93,7 +99,7 @@ class GetLinkWeight(threading.Thread):
 		# deal
 		dealed_count=0
 		while True:
-			line=f.readline();
+			line=f.readline()
 			if not line:
 				break
 			link=line.split('\t')[0]
@@ -103,7 +109,7 @@ class GetLinkWeight(threading.Thread):
 			if result[0] == 'NULL':
 				dealed_count=0
 			else:
-				output.write('\t'.join(result) + '\n')
+				output.write(','.join(result) + '\n')
 				dealed_count+=1
 				self.total_count+=1
 				last_offset=f.tell()
