@@ -96,7 +96,7 @@ class GetLinkWeight(threading.Thread):
 			output=open(out_file, 'a')
 		else:
 			output=open(out_file, 'w')
-			output.write('百度权重,百度来路,百度来路,爱站词数,网站,总收录,百度快照,一周收录,24小时收录\n')
+			output.write('百度权重,百度来路,百度来路,爱站词数,网站,总收录,百度快照,一周收录,24小时收录\n'.decode('utf-8').encode('gbk'))
 			output.flush()
 		# deal
 		dealed_count=0
