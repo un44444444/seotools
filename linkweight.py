@@ -71,22 +71,22 @@ class GetLinkWeight(threading.Thread):
 		#
 		return (weight,src1,src2,words,total_sum,week_count,day_count)
 	
-	def _get_data(self, action, referer):
+	def _get_data(self, action, referer, timeout=30):
 		try:
 			req=urllib2.Request(action)
 			req.add_header('Referer', referer)
-			resp=self.opener.open(req, timeout=10)
+			resp=self.opener.open(req, timeout=timeout)
 			content=resp.read()
 			return content
 		except:
 			return 'except'
 	
-	def _get_data2(self, action, referer):
+	def _get_data2(self, action, referer, timeout=30):
 		try:
 			req=urllib2.Request(action)
 			req.add_header('Referer', referer)
 			req.add_header('X-Requested-With', 'XMLHttpRequest')
-			resp=self.opener.open(req, timeout=5)
+			resp=self.opener.open(req, timeout=timeout)
 			content=resp.read()
 			return content
 		except:
