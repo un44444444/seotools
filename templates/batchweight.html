@@ -46,7 +46,8 @@ function query_weight(seqnum, filename){
     			clearInterval(timerid);
     			total_count=json.count1;
     			dealed_count=json.count2;
-    			$('#li_'+seqnum).text('处理完毕：当前已完成'+dealed_count+'/'+total_count+'。');
+    			lasterror=json.lasterror;
+    			$('#li_'+seqnum).text('处理完毕：'+lasterror+'当前已完成'+dealed_count+'/'+total_count+'。');
     		}
     		else
     		{

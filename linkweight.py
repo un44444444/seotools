@@ -18,31 +18,48 @@ class GetLinkWeight(threading.Thread):
 		self.opener = opener.getOpener(self.site_base, name)
 		self.total_count = 0
 		self.status = 0
+		self.lasterror = '任务未开始。'
 		
 	def get_weight(self, link):
 		main_page = self.site_baidu+'/'+link+'/position/'
 		page = self._get_data(main_page, self.site_baidu)
 		#
 		weight = 'NULL'
-		str_re='<td\scolspan="5"\salign="left"><img\ssrc="http:\/\/static.aizhan.com\/images\/brs\/([0-9]*).gif"'
-		reObj=re.compile(str_re)
-		allMatch=reObj.findall(page)
-		if len(allMatch) == 1:
-			weight = allMatch[0]
-		#
 		src1 = src2 = 'NULL'
-		str_re='<span class="red">([0-9]*) ~ ([0-9]*)<\/span>'
-		reObj=re.compile(str_re)
-		allMatch=reObj.findall(page)
-		if len(allMatch) == 1:
-			(src1, src2) = allMatch[0]
-		#
 		words = 'NULL'
-		str_re='<td colspan="5"\salign="left"><span\sclass="red">([0-9]*)<\/span>'
-		reObj=re.compile(str_re)
-		allMatch=reObj.findall(page)
-		if len(allMatch) == 1:
-			words = allMatch[0]
+		if len(page)<=7:
+			weight = 'timeout'
+		else:
+			str_re='<td\scolspan="5"\salign="left"><img\ssrc="http:\/\/static.aizhan.com\/images\/brs\/([0-9]*).gif"'
+			reObj=re.compile(str_re)
+			allMatch=reObj.findall(page)
+			# normal
+			if len(allMatch) == 1:
+				weight = allMatch[0]
+				#
+				str_re='<span class="red">([0-9]*) ~ ([0-9]*)<\/span>'
+				reObj=re.compile(str_re)
+				allMatch=reObj.findall(page)
+				if len(allMatch) == 1:
+					(src1, src2) = allMatch[0]
+				#
+				str_re='<td colspan="5"\salign="left"><span\sclass="red">([0-9]*)<\/span>'
+				reObj=re.compile(str_re)
+				allMatch=reObj.findall(page)
+				if len(allMatch) == 1:
+					words = allMatch[0]
+			# not expect condition
+			else:
+				str_re='<span style="font-size:14px;">(.*)<\/span>'
+				reObj=re.compile(str_re)
+				allMatch=reObj.findall(page)
+				if len(allMatch) == 1:
+					weight = 'error'
+					src1 = allMatch[0]
+					if len(src1)>100:
+						weight = 'NULL'
+					src1 = src1.decode('utf-8').encode('gbk')
+					print src1
 		#
 		timestamp = time.time()
 		url1 = '/ajaxAction/get.php?domain=%s&action=baidu%%3Ashoulu%%3Aall&n=0&rn=_%d0' % (link, timestamp)
@@ -58,7 +75,7 @@ class GetLinkWeight(threading.Thread):
 		try:
 			req=urllib2.Request(action)
 			req.add_header('Referer', referer)
-			resp=self.opener.open(req)
+			resp=self.opener.open(req, timeout=10)
 			content=resp.read()
 			return content
 		except:
@@ -69,7 +86,7 @@ class GetLinkWeight(threading.Thread):
 			req=urllib2.Request(action)
 			req.add_header('Referer', referer)
 			req.add_header('X-Requested-With', 'XMLHttpRequest')
-			resp=self.opener.open(req)
+			resp=self.opener.open(req, timeout=5)
 			content=resp.read()
 			return content
 		except:
@@ -77,6 +94,7 @@ class GetLinkWeight(threading.Thread):
 	
 	def deal_file(self, in_file, out_file):
 		self.status = 1
+		self.lasterror = '成功完成。'
 		f=open(in_file)
 		bom=f.read(3)
 		if bom==codecs.BOM_UTF8:
@@ -110,6 +128,7 @@ class GetLinkWeight(threading.Thread):
 			print result
 			if result[0] == 'NULL':
 				dealed_count=0
+				self.lasterror = result[1]
 			else:
 				record=','.join(result).replace('##',',')
 				output.write(record + '\n')
@@ -123,7 +142,8 @@ class GetLinkWeight(threading.Thread):
 				ftemp.close()
 				output.flush()
 			if dealed_count == 0:
-				print 'reach server limitation count'
+				print self.lasterror
+				self.lasterror = self.lasterror.decode('gbk').encode('utf-8')
 				break
 		#
 		self.status = 0
@@ -140,6 +160,8 @@ class GetLinkWeight(threading.Thread):
 	
 	def get_status(self):
 		return self.status
+	def get_lasterror(self):
+		return self.lasterror
 	def get_totalcount(self):
 		return self.total_count
 	def get_filecount(self):

@@ -135,16 +135,17 @@ class batchweight:
 		print filestat
 		handler = filestat.get(file)
 		status = 0
-		count1 = 0
-		count2 = 0
+		ret = {}
 		if handler is not None:
 			status = handler.get_status()
 			if status>0:
 				count1=handler.get_totalcount()
+				ret = dict(status=status,count1=count1)
 			else:
 				handler.join(0.01)
 				(count1,count2)=handler.get_filecount()
-		ret = dict(status=status,count1=count1,count2=count2)
+				lasterror=handler.get_lasterror()
+				ret = dict(status=status,count1=count1,count2=count2,lasterror=lasterror)
 		web.header('Content-Type', 'application/json')
 		return json.dumps(ret)
 	@jsonize
