@@ -56,7 +56,7 @@ class GetLinkWeight(threading.Thread):
 				if len(allMatch) == 1:
 					weight = 'error'
 					src1 = allMatch[0]
-					if len(src1)>100:
+					if len(src1)>=57:
 						weight = 'NULL'
 					src1 = src1.decode('utf-8').encode('gbk')
 					print src1
