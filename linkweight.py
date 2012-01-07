@@ -96,6 +96,8 @@ class GetLinkWeight(threading.Thread):
 			output=open(out_file, 'a')
 		else:
 			output=open(out_file, 'w')
+			output.write('百度权重,百度来路,百度来路,爱站词数,网站,总收录,百度快照,一周收录,24小时收录\n')
+			output.flush()
 		# deal
 		dealed_count=0
 		while True:
@@ -109,7 +111,8 @@ class GetLinkWeight(threading.Thread):
 			if result[0] == 'NULL':
 				dealed_count=0
 			else:
-				output.write(','.join(result) + '\n')
+				record=','.join(result).replace('##',',')
+				output.write(record + '\n')
 				dealed_count+=1
 				self.total_count+=1
 				last_offset=f.tell()
@@ -122,7 +125,11 @@ class GetLinkWeight(threading.Thread):
 			if dealed_count == 0:
 				print 'reach server limitation count'
 				break
+		#
 		self.status = 0
+		ftemp=open(tempfilename, 'w')
+		ftemp.write(str(last_offset))
+		ftemp.close()
 	
 	def prepare_file(self, in_file, out_file):
 		self.input_file=in_file
@@ -146,7 +153,7 @@ class GetLinkWeight(threading.Thread):
 		outfile_count=0
 		f=open(self.output_file)
 		lines=f.readlines()
-		outfile_count=len(lines)
+		outfile_count=len(lines)-1
 		f.close
 		#
 		return (infile_count,outfile_count)
