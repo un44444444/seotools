@@ -16,6 +16,11 @@
             tree.appendChild(to_ul(filelist));
         });
     });
+function notify(msg)
+{
+	props = {};
+	ONERING.createWindow('/warning/'+msg, 400, 300, props)
+}
 function allPrpos(obj)
 {     
     var props = "";
@@ -48,6 +53,7 @@ function query_weight(seqnum, filename){
     			dealed_count=json.count2;
     			lasterror=json.lasterror;
     			$('#li_'+seqnum).text('处理完毕：'+lasterror+'当前已完成'+dealed_count+'/'+total_count+'。');
+    			notify(lasterror);
     		}
     		else
     		{

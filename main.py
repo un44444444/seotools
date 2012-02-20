@@ -43,6 +43,7 @@ urls = (
 	'/data/batchweight', 'data_batchweight',
 	'/file/(.*)', 'fileshow',
 	'/data/file/(.*)', 'data_file',
+	'/warning/(.*)', 'warning',
 )
 
 render = render_mako(
@@ -195,6 +196,10 @@ class data_file:
 			pass
 		#
 		return dict(title=title, content=content)
+
+class warning:
+	def GET(self, msg=None):
+		return render.warning(msg=msg)
 
 class data_test:
 	@jsonize
