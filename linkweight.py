@@ -123,7 +123,8 @@ class GetLinkWeight(threading.Thread):
 			if not line:
 				break
 			link=line.split('\t')[0]
-			site = link[7:].split('/')[0]
+			link=link[:-1].replace('http://', '')
+			site = link.split('/')[0]
 			result = self.get_weight(site)
 			print result
 			if result[0] == 'NULL':
