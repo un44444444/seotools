@@ -96,8 +96,13 @@ class GetLinkWeight(threading.Thread):
 		self.status = 1
 		self.lasterror = '成功完成。'
 		f=open(in_file)
-		bom=f.read(3)
-		if bom==codecs.BOM_UTF8:
+		bom=f.read(4)
+		other_encoding = [codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE, codecs.BOM_UTF32_LE, codecs.BOM_UTF32_BE]
+		if (bom[:2] in other_encoding) or (bom in other_encoding):
+			self.status = 0
+			self.lasterror = '文件编码无法处理，请另存为UTF-8格式。'
+			return
+		if bom[:3]==codecs.BOM_UTF8:
 			f.seek(3)
 		else:
 			f.seek(0)
