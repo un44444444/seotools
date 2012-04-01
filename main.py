@@ -24,6 +24,7 @@ from website import WebsitesMgr
 
 FILE_DIR = 'D:/seo_articles/'
 BATCH_WEIGHT_DIR = 'D:/link_weight/'
+EXTERNAL_LINK_DIR = 'D:/external_link/'
 
 urls = (
 	'/init', 'init',
@@ -44,6 +45,9 @@ urls = (
 	'/file/(.*)', 'fileshow',
 	'/data/file/(.*)', 'data_file',
 	'/warning/(.*)', 'warning',
+	'/queryexlink', 'queryexlink',
+	'/queryexlink/(.*)', 'queryexlink',
+	'/data/queryexlink', 'data_queryexlink',
 )
 
 render = render_mako(
@@ -129,12 +133,12 @@ class data_filelist:
 
 filestat = {}
 class batchweight:
-	def GET(self, file=None):
-		if file is None:
+	def GET(self, filename=None):
+		if filename is None:
 			return render.batchweight(filedir=BATCH_WEIGHT_DIR)
-		print "GET file="+file
+		print "GET filename="+filename
 		print filestat
-		handler = filestat.get(file)
+		handler = filestat.get(filename)
 		status = 0
 		ret = {}
 		if handler is not None:
@@ -150,21 +154,21 @@ class batchweight:
 		web.header('Content-Type', 'application/json')
 		return json.dumps(ret)
 	@jsonize
-	def POST(self, file):
-		out_file = file[:-4]+"_out.csv"
-		print "batchweight.POST(in="+BATCH_WEIGHT_DIR+file+", out="+BATCH_WEIGHT_DIR+out_file+")"
+	def POST(self, filename):
+		out_file = filename[:-4]+"_out.csv"
+		print "batchweight.POST(in="+BATCH_WEIGHT_DIR+filename+", out="+BATCH_WEIGHT_DIR+out_file+")"
 		i = web.input()
 		email = i.email
 		passwd = i.passwd
 		print "batchweight.POST(email="+email+", passwd="+passwd+")"
 		import linkweight
 		handler = linkweight.GetLinkWeight(email)
-		handler.prepare_file(BATCH_WEIGHT_DIR+file, BATCH_WEIGHT_DIR+out_file)
+		handler.prepare_file(BATCH_WEIGHT_DIR+filename, BATCH_WEIGHT_DIR+out_file)
 		if email and passwd:
 			handler.login(email, passwd)
 		handler.start()
-		filestat[file] = handler
-		return dict(file=file)
+		filestat[filename] = handler
+		return dict(file=filename)
 
 class data_batchweight:
 	@jsonize
@@ -172,6 +176,54 @@ class data_batchweight:
 		file_list = []
 		for file_name in os.listdir(BATCH_WEIGHT_DIR):
 			if fnmatch.fnmatch( file_name, '*.txt' ):
+				file_list.append(file_name.decode('gbk').encode('utf-8'))
+		return dict(files=file_list)
+
+exlink_filestat = {}
+class queryexlink:
+	def GET(self, filename=None):
+		if filename is None:
+			return render.queryexlink(filedir=EXTERNAL_LINK_DIR)
+		print "GET filename="+filename
+		print exlink_filestat
+		handler = exlink_filestat.get(filename)
+		status = 0
+		ret = {}
+		if handler is not None:
+			status = handler.get_status()
+			if status>0:
+				count1=handler.get_totalcount()
+				ret = dict(status=status,count1=count1)
+			else:
+				handler.join(0.01)
+				(count1,count2)=handler.get_filecount()
+				lasterror=handler.get_lasterror()
+				ret = dict(status=status,count1=count1,count2=count2,lasterror=lasterror)
+		web.header('Content-Type', 'application/json')
+		return json.dumps(ret)
+	@jsonize
+	def POST(self, filename):
+		out_file = filename[:-4]+"_out.csv"
+		print "queryexlink.POST(in="+EXTERNAL_LINK_DIR+filename+", out="+EXTERNAL_LINK_DIR+out_file+")"
+		i = web.input()
+		email = i.email
+		passwd = i.passwd
+		print "queryexlink.POST(email="+email+", passwd="+passwd+")"
+		import queryexlink
+		handler = queryexlink.QueryExternalLink(email)
+		handler.prepare_file(EXTERNAL_LINK_DIR+filename, EXTERNAL_LINK_DIR+out_file)
+		if email and passwd:
+			handler.login(email, passwd)
+		handler.start()
+		exlink_filestat[filename] = handler
+		return dict(file=filename)
+
+class data_queryexlink:
+	@jsonize
+	def GET(self):
+		file_list = []
+		for file_name in os.listdir(EXTERNAL_LINK_DIR):
+			if fnmatch.fnmatch( file_name, '*.csv' ):
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
 

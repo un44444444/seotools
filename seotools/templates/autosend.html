@@ -1,0 +1,93 @@
+﻿<%inherit file="/page_base.html" />
+
+<%def name="page_name()">Auto Send</%def>
+
+<h2>
+输入验证码以发送文章
+</h2>
+<div id="article">
+  <p><pre id="title"></pre></p>
+  <p><pre id="content"></pre></p>
+</div>
+<div>
+% for website in websites:
+<%
+	shortname = website.replace('.','')
+%>
+<fieldset>
+<legend>${website}</legend>
+<form name="${website}" action="" method="POST">
+<div id="block_secimage_${shortname}">
+	<label for="secimage_${shortname}">验证码：</label>
+	<img id="secimage_${shortname}" src="" /><br/>
+	<label for="seccode_${shortname}">输入验证码：</label>
+	<input type="text" id="seccode_${shortname}" value="" />
+</div><br/>
+<div id="block_secqaa_${shortname}">
+	<label id="question_${shortname}" for="secqaa_${shortname}"></label>
+	<input type="text" id="secqaa_${shortname}" value="" />
+</div><br/>
+	<button id="submit_${shortname}">提交</button>
+	<div id="result_${shortname}"></div>
+</form>
+</fieldset>
+% endfor
+</div>
+
+<script>
+    var filename = '${filename}';
+    $(document).ready(function(){
+        ONERING.getJSON('/data/file/'+filename, function(json) {
+            var title = json.title;
+            var content = json.content;
+            $("#title").text(title);
+            $("#content").text(content);
+        });
+        //
+        $('form').each(function(n,form){
+        	deal_fair(form.name);
+        });
+    });
+    function deal_fair(sitename)
+    {
+        var name = sitename.replace(/\./g,'');
+        ONERING.getJSON('/data/seccode/'+sitename, function(json) {
+            var data = json['name'];
+            if (/^\s*$/.test(data))
+            {
+            	$('#block_secimage_'+name).hide();
+            	return;
+            }
+            $('#secimage_'+name).attr("src", "/static/secimage/"+sitename+"_" + data);
+        });
+        ONERING.getJSON('/data/secqaa/'+sitename, function(json) {
+            var q = json['q'];
+            if (/^\s*$/.test(q))
+            {
+            	$('#block_secqaa_'+name).hide();
+            	return;
+            }
+            if (/^.*\.png$/.test(q))
+            {
+            	var img = $('<img/>').attr("src", "/static/secimage/"+sitename+"_" + q);
+            	$('#question_'+name).append(img);
+            	return;
+            }
+            var a = json['a'];
+            $('#question_'+name).text(q);
+            $('#secqaa_'+name).val(a);
+        });
+        $('#submit_'+name).click(function(){
+            var seccode = $('#seccode_'+name).val();
+            var secqaa = $('#secqaa_'+name).val();
+            ONERING.post('/data/send/'+sitename, 
+            {seccode:seccode, secqaa:secqaa, title:$("#title").text(), content:$("#content").text()}, 
+            function(json) {
+                var data = json['name'];
+                var label = $('<label></label>').text("文章URL地址:");
+                var link = $('<a></a>').attr('href',data).attr('target','_blank').text(data);
+                $('#result_'+name).append(label).append(link);
+            }, "json");
+        });
+    }
+</script>

@@ -1,0 +1,20 @@
+<%inherit file="/page_base.html" />
+
+<%def name="page_name()">File Show</%def>
+
+<div id="article">
+  <p><pre id="title"></pre></p>
+  <p><pre id="content"></pre></p>
+</div>
+
+<script>
+    var filename = '${filename}';
+    $(document).ready(function(){
+        ONERING.getJSON('/data/file/'+filename, function(json) {
+            var title = json.title;
+            var content = json.content;
+            $("#title").text(title);
+            $("#content").text(content);
+        });
+    });
+</script>
