@@ -28,7 +28,16 @@ class QueryExternalLink(threading.Thread):
 		if len(page)<=7:
 			weight = 'timeout'
 		else:
-			str_re='<span class="nums"(.*<)\/span>'.decode('utf-8').encode('gbk')
+			# check encoding
+			encoding = 'gbk'
+			str_re='"text/html;charset=([1-9a-zA-Z-]+)"'
+			reObj=re.compile(str_re)
+			allMatch=reObj.findall(page)
+			if len(allMatch) >= 1:
+				encoding = allMatch[0]
+			print encoding
+			# find key word
+			str_re='<span class="nums"([^<]*<)\/span>'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(page)
 			#print page
@@ -41,8 +50,12 @@ class QueryExternalLink(threading.Thread):
 				allMatch=reObj.findall(weight)
 				if len(allMatch) >= 1:
 					weight = allMatch[0]
-				#weight = weight.decode('gbk').encode('utf-8')
+				if encoding=='utf-8' or encoding=='UTF-8':
+					weight = weight.decode('utf-8').encode('gbk')
+				#elif encoding=='gbk' or encoding=='GBK':
+				#	weight = weight.decode('gbk').encode('utf-8')
 				weight = weight.replace(',', '')
+				#print weight
 			else:
 				str_re='<div class="nors">'
 				reObj=re.compile(str_re)
