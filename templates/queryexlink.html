@@ -35,9 +35,9 @@ function allPrpos(obj)
     return props  ;    
 }
 function query_weight(seqnum, filename){
-	email=$('#email_'+seqnum).val();
-	passwd=$('#pass_'+seqnum).val();
-	post_data = {email:email,passwd:passwd};
+	//email=$('#email_'+seqnum).val();
+	//passwd=$('#pass_'+seqnum).val();
+	post_data = {email:'',passwd:''};
     ONERING.post('/queryexlink/'+filename, post_data, function(json) {
     	$('#li_'+seqnum).text('开始处理文件：'+allPrpos(json));
     }, "json");
@@ -86,7 +86,7 @@ function to_ul (filelist) {
     tr1.appendChild (td1)
     table.appendChild (tr1)
     //
-    tr2 = document.createElement ("tr");
+/*    tr2 = document.createElement ("tr");
     td2 = document.createElement ("td");
     input_email = document.createElement ("input");
     input_email.setAttribute("id", "email_"+f);
@@ -98,7 +98,7 @@ function to_ul (filelist) {
     td2.appendChild (input_pass);
     tr2.appendChild (td2)
     table.appendChild (tr2)
-    //
+*/    //
     tr3 = document.createElement ("tr");
     td3 = document.createElement ("td");
     td3.setAttribute("id", "li_"+f);

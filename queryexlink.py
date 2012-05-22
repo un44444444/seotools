@@ -129,6 +129,7 @@ class QueryExternalLink(threading.Thread):
 				site = site[:-1]
 			if len(site)<5:
 				continue
+			site=site.replace('"', '')
 			result = self.get_weight(site)
 			print result
 			if result[1] == 'NULL':
