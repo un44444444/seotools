@@ -47,7 +47,11 @@ class DiscuzBase:
 		return content
 
 	def request_post(self, action, data, referer='', retry_count=5):
-		req=urllib2.Request(action,urllib.urlencode(data))
+		if isinstance(data, basestring):
+			post_data = data
+		else:
+			post_data = urllib.urlencode(data)
+		req=urllib2.Request(action,post_data)
 		if referer:
 			req.add_header('Referer', referer)
 		content = ""
@@ -72,7 +76,11 @@ class DiscuzBase:
 		return content
 
 	def request_post_simple(self, action, data, referer=''):
-		req=urllib2.Request(action,urllib.urlencode(data))
+		if isinstance(data, basestring):
+			post_data = data
+		else:
+			post_data = urllib.urlencode(data)
+		req=urllib2.Request(action,post_data)
 		if referer:
 			req.add_header('Referer', referer)
 		#u=urllib2.urlopen(req)
