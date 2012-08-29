@@ -8,6 +8,10 @@ from common.globalfunc import render,jsonize
 import logging
 logger = logging.getLogger()
 
+import sys
+sys.path.append('..')
+from handlers.linkweight import GetLinkWeight as CHandler
+
 BATCH_WEIGHT_DIR = 'D:/link_weight/'
 urls = (
 	'/?', 'index',
@@ -59,8 +63,7 @@ class handle:
 		email = i.email
 		passwd = i.passwd
 		print "batchweight.POST(email="+email+", passwd="+passwd+")"
-		import linkweight
-		handler = linkweight.GetLinkWeight(email)
+		handler = CHandler(email)
 		handler.prepare_file(BATCH_WEIGHT_DIR+filename, BATCH_WEIGHT_DIR+out_file)
 		if email and passwd:
 			handler.login(email, passwd)

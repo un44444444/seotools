@@ -8,6 +8,10 @@ from common.globalfunc import render,jsonize
 import logging
 logger = logging.getLogger()
 
+import sys
+sys.path.append('..')
+from handlers.queryexlink import QueryExternalLink as CHandler
+
 EXTERNAL_LINK_DIR = 'D:/external_link/'
 urls = (
 	'/?', 'index',
@@ -61,8 +65,7 @@ class handle:
 		email = i.email
 		passwd = i.passwd
 		print "queryexlink.POST(email="+email+", passwd="+passwd+")"
-		import queryexlink
-		handler = queryexlink.QueryExternalLink(email)
+		handler = CHandler(email)
 		handler.prepare_file(EXTERNAL_LINK_DIR+filename, EXTERNAL_LINK_DIR+out_file)
 		if email and passwd:
 			handler.login(email, passwd)

@@ -20,7 +20,7 @@ sys.path.append(os.sep.join((os.getcwd(),'lib')))
 import onering
 
 from filemgr import FileMgr
-from website import WebsitesMgr
+from handlers.website import WebsitesMgr
 import batchweight
 import querylink
 #import lusongsong
