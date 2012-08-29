@@ -8,7 +8,7 @@
 <script>
     $(document).ready(function(){
         //$('#result').text("Getting data...");
-        ONERING.getJSON('/data/batchweight', function(json) {
+        ONERING.getJSON('/batchweight/files', function(json) {
             //alert(allPrpos(json));
             var filelist = json.files;
             //alert(filelist);
@@ -38,13 +38,13 @@ function query_weight(seqnum, filename){
 	email=$('#email_'+seqnum).val();
 	passwd=$('#pass_'+seqnum).val();
 	post_data = {email:email,passwd:passwd};
-    ONERING.post('/batchweight/'+filename, post_data, function(json) {
+    ONERING.post('/batchweight/handle/'+filename, post_data, function(json) {
     	$('#li_'+seqnum).text('开始处理文件：'+allPrpos(json));
     }, "json");
     //
     var timerid;
     function query_status(){
-    	ONERING.getJSON('/batchweight/'+filename, function(json) {
+    	ONERING.getJSON('/batchweight/query/'+filename, function(json) {
     		status=json.status;
     		if (status<=0)
     		{

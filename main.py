@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: UTF-8
 
-__version__ = '0.1'
+__version__ = '0.2'
 
 import sys, os
 try:
@@ -21,11 +21,11 @@ import onering
 
 from filemgr import FileMgr
 from website import WebsitesMgr
-#import lusongsong
+import batchweight
 import querylink
+#import lusongsong
 
 FILE_DIR = 'D:/seo_articles/'
-BATCH_WEIGHT_DIR = 'D:/link_weight/'
 
 urls = (
 	'/init', 'init',
@@ -40,9 +40,7 @@ urls = (
 	'/data/secqaa/(.*)', 'data_secqaa',
 	'/filelist', 'filelist',
 	'/data/filelist', 'data_filelist',
-	'/batchweight', 'batchweight',
-	'/batchweight/(.*)', 'batchweight',
-	'/data/batchweight', 'data_batchweight',
+    '/batchweight', batchweight.app,
 	'/file/(.*)', 'fileshow',
 	'/data/file/(.*)', 'data_file',
 	'/warning/(.*)', 'warning',
@@ -126,54 +124,6 @@ class data_filelist:
 	def GET(self):
 		file_list = []
 		for file_name in os.listdir(FILE_DIR):
-			if fnmatch.fnmatch( file_name, '*.txt' ):
-				file_list.append(file_name.decode('gbk').encode('utf-8'))
-		return dict(files=file_list)
-
-filestat = {}
-class batchweight:
-	def GET(self, filename=None):
-		if filename is None:
-			return render.batchweight(filedir=BATCH_WEIGHT_DIR)
-		print "GET filename="+filename
-		print filestat
-		handler = filestat.get(filename)
-		status = 0
-		ret = {}
-		if handler is not None:
-			status = handler.get_status()
-			if status>0:
-				count1=handler.get_totalcount()
-				ret = dict(status=status,count1=count1)
-			else:
-				handler.join(0.01)
-				(count1,count2)=handler.get_filecount()
-				lasterror=handler.get_lasterror()
-				ret = dict(status=status,count1=count1,count2=count2,lasterror=lasterror)
-		web.header('Content-Type', 'application/json')
-		return json.dumps(ret)
-	@jsonize
-	def POST(self, filename):
-		out_file = filename[:-4]+"_out.csv"
-		print "batchweight.POST(in="+BATCH_WEIGHT_DIR+filename+", out="+BATCH_WEIGHT_DIR+out_file+")"
-		i = web.input()
-		email = i.email
-		passwd = i.passwd
-		print "batchweight.POST(email="+email+", passwd="+passwd+")"
-		import linkweight
-		handler = linkweight.GetLinkWeight(email)
-		handler.prepare_file(BATCH_WEIGHT_DIR+filename, BATCH_WEIGHT_DIR+out_file)
-		if email and passwd:
-			handler.login(email, passwd)
-		handler.start()
-		filestat[filename] = handler
-		return dict(file=filename)
-
-class data_batchweight:
-	@jsonize
-	def GET(self):
-		file_list = []
-		for file_name in os.listdir(BATCH_WEIGHT_DIR):
 			if fnmatch.fnmatch( file_name, '*.txt' ):
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
