@@ -14,10 +14,10 @@ class HandlerBase(threading.Thread):
 		self.total_count = 0
 		self.status = 0
 		self.lasterror = '任务未开始。'
-		self.output_header = 'status,echo\n'.decode('utf-8').encode('gbk')
+		self.output_header = 'status,echo'
 	
 	def handle(self, line):
-		return ["1", line]
+		return "1,%s" % (line[:-1])
 	
 	def deal_file(self, in_file, out_file):
 		self.status = 1
@@ -41,52 +41,49 @@ class HandlerBase(threading.Thread):
 			ftemp=open(tempfilename)
 			last_offset=int(ftemp.read())
 			ftemp.close()
-		if last_offset > 0:
-			f.seek(last_offset)
-			output=open(out_file, 'a')
-		else:
-			output=open(out_file, 'w')
-			output.write(self.output_header)
-			output.flush()
+		# out file
+		if out_file:
+			if last_offset > 0:
+				f.seek(last_offset)
+				output=open(out_file, 'a')
+			else:
+				output=open(out_file, 'w')
+				output.write(self.output_header.decode('utf-8').encode('gbk'))
+				output.write('\n')
+				output.flush()
 		# deal
 		dealed_count=0
-		while True:
+		while self.status == 1:
 			line=f.readline()
 			if not line:
 				break
 			result = self.handle(line)
 			print result
-			if result[0] == 'NULL':
-				dealed_count=0
-				self.lasterror = result[1]
-			else:
-				record=','.join(result).replace('##',',')
-				output.write(record + '\n')
-				dealed_count+=1
-				self.total_count+=1
-				last_offset=f.tell()
+			if output: output.write(result + '\n')
+			dealed_count+=1
+			self.total_count+=1
+			last_offset=f.tell()
 			# record result
 			if dealed_count%10 == 0:
 				ftemp=open(tempfilename, 'w')
 				ftemp.write(str(last_offset))
 				ftemp.close()
-				output.flush()
-			if dealed_count == 0:
-				print self.lasterror
-				self.lasterror = self.lasterror.decode('gbk').encode('utf-8')
-				break
+				if output: output.flush()
 		#
 		self.status = 0
 		ftemp=open(tempfilename, 'w')
 		ftemp.write(str(last_offset))
 		ftemp.close()
+		if output: output.flush()
 	
-	def prepare_file(self, in_file, out_file):
+	def prepare_file(self, in_file, out_file=None):
 		self.input_file=in_file
 		self.output_file=out_file
 	
 	def run(self):
 		return self.deal_file(self.input_file, self.output_file)
+	def stop(self):
+		self.status = 0
 	
 	def get_status(self):
 		return self.status
