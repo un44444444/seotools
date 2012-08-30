@@ -98,10 +98,12 @@ class HandlerBase(threading.Thread):
 		infile_count=len(lines)
 		f.close
 		#
-		f=open(self.output_file)
-		lines=f.readlines()
-		outfile_count=len(lines)-1
-		f.close
+		outfile_count = -1
+		if self.output_file:
+			f=open(self.output_file)
+			lines=f.readlines()
+			outfile_count=len(lines)-1
+			f.close
 		#
 		return (infile_count,outfile_count)
 	
