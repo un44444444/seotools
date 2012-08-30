@@ -23,7 +23,7 @@ from filemgr import FileMgr
 from handlers.website import WebsitesMgr
 import batchweight
 import querylink
-#import lusongsong
+import lusongsong
 
 FILE_DIR = 'D:/seo_articles/'
 
@@ -45,6 +45,7 @@ urls = (
 	'/data/file/(.*)', 'data_file',
 	'/warning/(.*)', 'warning',
     '/queryexlink', querylink.app,
+    '/lusongsong', lusongsong.app,
 )
 
 render = render_mako(
