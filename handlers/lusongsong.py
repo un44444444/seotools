@@ -1,28 +1,36 @@
 #!/usr/bin/env python
 # encoding: UTF-8
-
+import os
+import time
 import webbrowser
 import handler
 
 class OpenLusongsong(handler.HandlerBase):
 	def __init__(self, name=None):
 		handler.HandlerBase.__init__(self, name = name)
-		self.prefix = 'http://luson'+'gsong.com'
+		self.prefix = 'http://tool.'+'luson'+'gsong.com'
 		self.postfix = ''
-		self.time = 30
+		self.time = 20
+		self.concurrent = 5
+		self.waitcomplete = 17*60
 	
-	def deal_a_site(self, site, time=20):
-		dest_url = '%s/tool/seo/seo.asp?url=%s&auto=yes&ttime=%d%s' % (self.prefix, site, time, self.postfix)
+	def deal_a_site(self, site, ttime=20):
+		dest_url = '%s/seo/seo.asp?url=%s&auto=yes&ttime=%d%s' % (self.prefix, site, ttime, self.postfix)
 		webbrowser.open_new_tab(dest_url)
+		time.sleep(0.5)
 	
 	def handle(self, line):
-		link=line.split('\t')[0]
-		#link=link[:-1].replace('http://', '')
-		#url = link.split('/')[0]
-		url=link.split(',')[0]
-		if url[-1] == '\n':
-			url = url[:-1]
-		site = url
+		link=line.strip()
+		if len(link) <= 3:
+			return 'too short'
+		link=link.replace('http://', '')
+		site = link.split('/')[0]
+		if site[-1] == '\n':
+			site = site[:-1]
+		# 
+		if self.total_count%self.concurrent==0 and self.total_count>0:
+			time.sleep(self.waitcomplete)
+			os.system('taskkill /F /IM iexplore.exe')
 		self.deal_a_site(site, self.time)
 		return '%s, OK'%site
 	
