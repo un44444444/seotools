@@ -10,14 +10,15 @@ class OpenLusongsong(handler.HandlerBase):
 		handler.HandlerBase.__init__(self, name = name)
 		self.prefix = 'http://tool.'+'luson'+'gsong.com'
 		self.postfix = ''
+		self.dealed_count = 0
 		self.time = 20
 		self.concurrent = 5
-		self.waitcomplete = 17*60
+		self.waitcomplete = 18*60
 	
 	def deal_a_site(self, site, ttime=20):
 		dest_url = '%s/seo/seo.asp?url=%s&auto=yes&ttime=%d%s' % (self.prefix, site, ttime, self.postfix)
 		webbrowser.open_new_tab(dest_url)
-		time.sleep(0.5)
+		time.sleep(1.5)
 	
 	def handle(self, line):
 		link=line.strip()
@@ -28,11 +29,26 @@ class OpenLusongsong(handler.HandlerBase):
 		if site[-1] == '\n':
 			site = site[:-1]
 		# 
-		if self.total_count%self.concurrent==0 and self.total_count>0:
+		if self.dealed_count%self.concurrent==0 and self.dealed_count>0:
 			time.sleep(self.waitcomplete)
 			os.system('taskkill /F /IM iexplore.exe')
 		self.deal_a_site(site, self.time)
+		self.dealed_count += 1
 		return '%s, OK'%site
+	
+	def run(self):
+		self.status = 1
+		while self.status == 1:
+			self.total_count = 0
+			ret = self.deal_file(self.input_file, self.output_file)
+			self.reset_offset(self.input_file)
+		self.status = 0
+		return ret
+	def reset_offset(self, in_file):
+		tempfilename=in_file+'.offset'
+		ftemp=open(tempfilename, 'w')
+		ftemp.write('0')
+		ftemp.close()
 	
 if __name__ == '__main__':
 	poster = OpenLusongsong('23')

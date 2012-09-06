@@ -20,7 +20,6 @@ class HandlerBase(threading.Thread):
 		return "1,%s" % (line[:-1])
 	
 	def deal_file(self, in_file, out_file):
-		self.status = 1
 		self.lasterror = '成功完成。'
 		f=open(in_file)
 		bom=f.read(4)
@@ -70,7 +69,6 @@ class HandlerBase(threading.Thread):
 				ftemp.close()
 				if output: output.flush()
 		#
-		self.status = 0
 		ftemp=open(tempfilename, 'w')
 		ftemp.write(str(last_offset))
 		ftemp.close()
@@ -81,7 +79,10 @@ class HandlerBase(threading.Thread):
 		self.output_file=out_file
 	
 	def run(self):
-		return self.deal_file(self.input_file, self.output_file)
+		self.status = 1
+		ret = self.deal_file(self.input_file, self.output_file)
+		self.status = 0
+		return ret
 	def stop(self):
 		self.status = 0
 	
