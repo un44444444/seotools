@@ -20,13 +20,13 @@ urls = (
 
 class index:
 	def GET(self):
-		return render.queryexlink(filedir=config.queryexlink.filedir)
+		return render.queryexlink(filedir=config.queryexlink.filedir) #@UndefinedVariable
 
 class files:
 	@jsonize
 	def GET(self):
 		file_list = []
-		for file_name in os.listdir(config.queryexlink.filedir):
+		for file_name in os.listdir(config.queryexlink.filedir): #@UndefinedVariable
 			if fnmatch.fnmatch( file_name, '*.csv' ):
 				if len(file_name)>7 and file_name[-8:-4]=='_out':
 					continue
@@ -58,13 +58,13 @@ class handle:
 	@jsonize
 	def POST(self, filename):
 		out_file = filename[:-4]+"_out.csv"
-		print "queryexlink.POST(in="+config.queryexlink.filedir+filename+", out="+config.queryexlink.filedir+out_file+")"
+		print "queryexlink.POST(in="+config.queryexlink.filedir+filename+", out="+config.queryexlink.filedir+out_file+")" #@UndefinedVariable
 		i = web.input()
 		email = i.email
 		passwd = i.passwd
 		print "queryexlink.POST(email="+email+", passwd="+passwd+")"
 		handler = CHandler(email)
-		handler.prepare_file(config.queryexlink.filedir+filename, config.queryexlink.filedir+out_file)
+		handler.prepare_file(config.queryexlink.filedir+filename, config.queryexlink.filedir+out_file) #@UndefinedVariable
 		if email and passwd:
 			handler.login(email, passwd)
 		handler.start()

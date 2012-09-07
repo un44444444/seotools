@@ -20,13 +20,13 @@ urls = (
 
 class index:
 	def GET(self):
-		return render.lusongsong(filedir=config.lusongsong.filedir)
+		return render.lusongsong(filedir=config.lusongsong.filedir) #@UndefinedVariable
 
 class files:
 	@jsonize
 	def GET(self):
 		file_list = []
-		for file_name in os.listdir(config.lusongsong.filedir):
+		for file_name in os.listdir(config.lusongsong.filedir): #@UndefinedVariable
 			if fnmatch.fnmatch( file_name, '*.txt' ):
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
@@ -55,9 +55,9 @@ class query:
 class handle:
 	@jsonize
 	def POST(self, filename):
-		logger.debug("%s.handle::POST(in=%s)" % (__name__, config.lusongsong.filedir+filename))
+		logger.debug("%s.handle::POST(in=%s)" % (__name__, config.lusongsong.filedir+filename)) #@UndefinedVariable
 		handler = CHandler()
-		handler.prepare_file(config.lusongsong.filedir+filename)
+		handler.prepare_file(config.lusongsong.filedir+filename) #@UndefinedVariable
 		handler.start()
 		filestat[filename] = handler
 		return dict(file=filename)
