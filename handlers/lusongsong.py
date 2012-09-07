@@ -5,20 +5,27 @@ import time
 import webbrowser
 import handler
 
+import sys
+sys.path.append('..')
+from common.config import config
+
 class OpenLusongsong(handler.HandlerBase):
 	def __init__(self, name=None):
 		handler.HandlerBase.__init__(self, name = name)
 		self.prefix = 'http://tool.'+'luson'+'gsong.com'
 		self.postfix = ''
 		self.dealed_count = 0
-		self.time = 20
-		self.concurrent = 5
-		self.waitcomplete = 18*60
+		self.time = config.lusongsong.time
+		self.concurrent = config.lusongsong.concurrent
+		self.waitcomplete = config.lusongsong.waitcomplete
 	
 	def deal_a_site(self, site, ttime=20):
 		dest_url = '%s/seo/seo.asp?url=%s&auto=yes&ttime=%d%s' % (self.prefix, site, ttime, self.postfix)
 		webbrowser.open_new_tab(dest_url)
-		time.sleep(1.5)
+		if self.dealed_count%self.concurrent==0:
+			time.sleep(5)
+		else:
+			time.sleep(1.5)
 	
 	def handle(self, line):
 		link=line.strip()
@@ -32,6 +39,7 @@ class OpenLusongsong(handler.HandlerBase):
 		if self.dealed_count%self.concurrent==0 and self.dealed_count>0:
 			time.sleep(self.waitcomplete)
 			os.system('taskkill /F /IM iexplore.exe')
+			os.system('taskkill /F /IM theworld.exe')
 		self.deal_a_site(site, self.time)
 		self.dealed_count += 1
 		return '%s, OK'%site

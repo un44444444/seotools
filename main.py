@@ -19,6 +19,9 @@ sys.path.append(os.sep.join((os.getcwd(),'lib')))
 #sys.path(os.sep.join((os.getcwd(),'lib')))
 import onering
 
+from common.config import config
+config.load('seotools.ini')
+
 from filemgr import FileMgr
 from handlers.website import WebsitesMgr
 import batchweight

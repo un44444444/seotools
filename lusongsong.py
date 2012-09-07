@@ -8,11 +8,9 @@ from common.globalfunc import render,jsonize
 import logging
 logger = logging.getLogger()
 
-import sys
-sys.path.append('..')
+from common.config import config
 from handlers.lusongsong import OpenLusongsong as CHandler
 
-FILES_DIR = 'D:/batch_lusongsong/'
 urls = (
 	'/?', 'index',
 	'/files', 'files',
@@ -22,13 +20,13 @@ urls = (
 
 class index:
 	def GET(self):
-		return render.lusongsong(filedir=FILES_DIR)
+		return render.lusongsong(filedir=config.lusongsong.filedir)
 
 class files:
 	@jsonize
 	def GET(self):
 		file_list = []
-		for file_name in os.listdir(FILES_DIR):
+		for file_name in os.listdir(config.lusongsong.filedir):
 			if fnmatch.fnmatch( file_name, '*.txt' ):
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
@@ -57,9 +55,9 @@ class query:
 class handle:
 	@jsonize
 	def POST(self, filename):
-		logger.debug("%s.handle::POST(in=%s)" % (__name__, FILES_DIR+filename))
+		logger.debug("%s.handle::POST(in=%s)" % (__name__, config.lusongsong.filedir+filename))
 		handler = CHandler()
-		handler.prepare_file(FILES_DIR+filename)
+		handler.prepare_file(config.lusongsong.filedir+filename)
 		handler.start()
 		filestat[filename] = handler
 		return dict(file=filename)

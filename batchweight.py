@@ -8,11 +8,9 @@ from common.globalfunc import render,jsonize
 import logging
 logger = logging.getLogger()
 
-import sys
-sys.path.append('..')
+from common.config import config
 from handlers.linkweight import GetLinkWeight as CHandler
 
-BATCH_WEIGHT_DIR = 'D:/link_weight/'
 urls = (
 	'/?', 'index',
 	'/files', 'files',
@@ -22,13 +20,13 @@ urls = (
 
 class index:
 	def GET(self):
-		return render.batchweight(filedir=BATCH_WEIGHT_DIR)
+		return render.batchweight(filedir=config.batchweight.filedir)
 
 class files:
 	@jsonize
 	def GET(self):
 		file_list = []
-		for file_name in os.listdir(BATCH_WEIGHT_DIR):
+		for file_name in os.listdir(config.batchweight.filedir):
 			if fnmatch.fnmatch( file_name, '*.txt' ):
 				file_list.append(file_name.decode('gbk').encode('utf-8'))
 		return dict(files=file_list)
@@ -58,13 +56,13 @@ class handle:
 	@jsonize
 	def POST(self, filename):
 		out_file = filename[:-4]+"_out.csv"
-		print "batchweight.POST(in="+BATCH_WEIGHT_DIR+filename+", out="+BATCH_WEIGHT_DIR+out_file+")"
+		print "batchweight.POST(in="+config.batchweight.filedir+filename+", out="+config.batchweight.filedir+out_file+")"
 		i = web.input()
 		email = i.email
 		passwd = i.passwd
 		print "batchweight.POST(email="+email+", passwd="+passwd+")"
 		handler = CHandler(email)
-		handler.prepare_file(BATCH_WEIGHT_DIR+filename, BATCH_WEIGHT_DIR+out_file)
+		handler.prepare_file(config.batchweight.filedir+filename, config.batchweight.filedir+out_file)
 		if email and passwd:
 			handler.login(email, passwd)
 		handler.start()
