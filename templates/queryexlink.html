@@ -1,6 +1,9 @@
 <%inherit file="/page_base.html" />
 
 <%def name="page_name()">External Link</%def>
+<%def name="extra_head()">
+<script type="text/javascript" src="/static/jquery.filetables.js"></script>
+</%def>
 
 <div>批量查询外链（${filedir}）：</div>
 <div id="tree"></div>
@@ -8,13 +11,14 @@
 <script>
     $(document).ready(function(){
         //$('#result').text("Getting data...");
-        ONERING.getJSON('/queryexlink/files', function(json) {
-            //alert(allPrpos(json));
-            var filelist = json.files;
-            //alert(filelist);
-            var tree = document.getElementById("tree");
-            tree.appendChild(to_ul(filelist));
-        });
+        //ONERING.getJSON('/queryexlink/files', function(json) {
+        //    //alert(allPrpos(json));
+        //    var filelist = json.files;
+        //    //alert(filelist);
+        //    var tree = document.getElementById("tree");
+        //    tree.appendChild(to_ul(filelist));
+        //});
+        $('#tree').filetables();
     });
 function notify(msg)
 {
