@@ -15,9 +15,9 @@ class OpenLusongsong(handler.HandlerBase):
 		self.prefix = 'http://tool.'+'luson'+'gsong.com'
 		self.postfix = ''
 		self.dealed_count = 0
-		self.time = config.lusongsong.time #@UndefinedVariable
-		self.concurrent = config.lusongsong.concurrent #@UndefinedVariable
-		self.waitcomplete = config.lusongsong.waitcomplete #@UndefinedVariable
+		self.time = int(config.lusongsong.time) #@UndefinedVariable
+		self.concurrent = int(config.lusongsong.concurrent) #@UndefinedVariable
+		self.waitcomplete = int(config.lusongsong.waitcomplete) #@UndefinedVariable
 	
 	def deal_a_site(self, site, ttime=20):
 		dest_url = '%s/seo/seo.asp?url=%s&auto=yes&ttime=%d%s' % (self.prefix, site, ttime, self.postfix)
