@@ -39,7 +39,7 @@ if __name__ == '__main__':
 		if title == 'except':
 			print "title except"
 			continue
-		elif title == 'error=You have reached the daily limit!':
+		elif title[:6] == 'error=':
 			print "title return(%s)"%title
 			break
 		print result[1]
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 		if content == 'except':
 			print "content except"
 			continue
-		elif content == 'error=You have reached the daily limit!':
+		elif content[:6] == 'error=':
 			print "content return(%s)"%content
 			break
 		#print result[2]

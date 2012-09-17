@@ -11,24 +11,26 @@ class Poster:
 		
 	def _change_action(self):
 		host = ''.join(['http://api.','spinner','chief','.com'])
-		port = 8080
+		port = 9001
 		config = [
-				('4039a8ef565c4f5d8', ''.join(['un','4444','44441']), '444444441'),
-				('45a0a23babbd44729', ''.join(['un','4444','4444']), '44444444'),
-				('753a2d8b9995450e8', ''.join(['ray','mond','182']), '2198300')
+				#('4039a8ef565c4f5d8', ''.join(['un','4444','44441']), '444444441'),
+				#('45a0a23babbd44729', ''.join(['un','4444','4444']), '44444444'),
+				('753a2d8b9995450e8', ''.join(['ray','mond','182']), '2198300'),
 		]
 		if self.index >= (len(config)-1):
 			return False
 		self.index += 1
 		(apikey,username,password) = config[self.index]
-		action = '%s:%d/?apikey=%s&username=%s&password=%s' % (host, port, apikey, username, password)
-		self.action_spin = action + '&spintype=1&spinfreq=1&original=1&protecthtml=1&protectwords=cubic,zirconia,wholesale,rings,earring,gemstone,synthetic'
+		action = '%s:%d/apikey=%s&username=%s&password=%s' % (host, port, apikey, username, password)
+		#protect_words = 'cubic,zirconia,wholesale,rings,earring,gemstone,synthetic'
+		protect_words = 'lose weight,lose,Lose,weight,Weight'
+		self.action_spin = action + '&spintype=1&spinfreq=1&original=1&protecthtml=1&protectwords=' + protect_words
 		self.action_times = action + '&querytimes=2'
 		return True
 	
 	def spin_content(self, data):
 		result = self._post_data(self.action_spin, data)
-		if result == 'error=You have reached the daily limit!':
+		if result == 'error= query time reach limit':
 			if self._change_action():
 				result = self._post_data(self.action_spin, data)
 		return result
