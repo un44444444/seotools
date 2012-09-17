@@ -7,6 +7,7 @@ import time
 class Poster:
 	def __init__(self):
 		self.index = -1
+		self.opener = urllib2.build_opener()
 		self._change_action()
 		
 	def _change_action(self):
@@ -17,10 +18,18 @@ class Poster:
 				#('45a0a23babbd44729', ''.join(['un','4444','4444']), '44444444'),
 				('753a2d8b9995450e8', ''.join(['ray','mond','182']), '2198300'),
 		]
+		proxies = [
+				#'80.58.250.68:80',
+				#'203.172.188.34:80',
+				'186.113.26.36:3128',
+		]
 		if self.index >= (len(config)-1):
 			return False
 		self.index += 1
 		(apikey,username,password) = config[self.index]
+		proxy_handler = urllib2.ProxyHandler({'http': proxies[self.index]})
+		self.opener = urllib2.build_opener(proxy_handler)
+		self.opener.addheaders=[('User-agent','Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)')]
 		action = '%s:%d/apikey=%s&username=%s&password=%s' % (host, port, apikey, username, password)
 		#protect_words = 'cubic,zirconia,wholesale,rings,earring,gemstone,synthetic'
 		protect_words = 'lose weight,lose,Lose,weight,Weight'
@@ -39,14 +48,13 @@ class Poster:
 		print self.action_times
 		return self._post_data(self.action_times, '')
 	
-	@staticmethod
-	def _post_data(action, data, retry_count=3):
+	def _post_data(self, action, data, retry_count=3):
 		err_count = 0
 		flage = True
 		while flage:
 			try:
 				req=urllib2.Request(action,data)
-				resp=urllib2.urlopen(req, timeout=20)
+				resp=self.opener.open(req, timeout=20)
 				content=resp.read()
 				flage=False
 				return content
@@ -59,11 +67,10 @@ class Poster:
 		#
 		return 'except'
 	
-	@staticmethod
-	def _get_data(action):
+	def _get_data(self, action):
 		try:
 			req=urllib2.Request(action)
-			resp=urllib2.urlopen(req)
+			resp=self.opener.open(req)
 			content=resp.read()
 			return content
 		except:
