@@ -28,7 +28,7 @@ class GetLinkWeight(handler.HandlerBase):
 		if len(page)<=7:
 			weight = 'timeout'
 		else:
-			str_re='<td\scolspan="5"\salign="left"><img\ssrc="http:\/\/static.aizhan.com\/images\/brs\/([0-9]*).gif"'
+			str_re='<td\scolspan="5"\salign="left">\s*(?:<div\sclass="l">)?<img\ssrc="http:\/\/static.aizhan.com\/images\/brs\/([0-9]*).gif"'
 			reObj=re.compile(str_re)
 			allMatch=reObj.findall(page)
 			# normal
@@ -63,7 +63,7 @@ class GetLinkWeight(handler.HandlerBase):
 		url1 = '/ajaxAction/get.php?domain=%s&action=baidu%%3Ashoulu%%3Aall&n=0&rn=_%d0' % (link, timestamp)
 		total_sum = self._get_data2(self.site_base+url1, main_page)
 		url2 = '/ajaxAction/get.php?domain=%s&action=baidu%%3Ashoulu%%3A7days&n=0&rn=_%d0' % (link, timestamp)
-		week_count = self._get_data2(self.site_base+url2, main_page)
+		week_count = self._get_data2(self.site_base+url2, main_page, 50)
 		url3 = '/ajaxAction/get.php?domain=%s&action=baidu%%3Ashoulu%%3A1days&n=0&rn=_%d0' % (link, timestamp)
 		day_count = self._get_data2(self.site_base+url3, main_page)
 		#
@@ -112,7 +112,7 @@ class GetLinkWeight(handler.HandlerBase):
 	
 if __name__ == '__main__':
 	poster = GetLinkWeight('23')
-	result=poster.get_weight('http://detail.zol.com.cn/digital_tv/index56028.shtml')
+	result=poster.get_weight('detail.zol.com.cn')
 	print result
 	exit(0)
 	poster.prepare_file('R:/input.txt', 'R:/output.csv')
