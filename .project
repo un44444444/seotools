@@ -16,12 +16,39 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1347083434098</id>
+			<id>1352528512435</id>
 			<name></name>
 			<type>6</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-*.dll</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1352528512447</id>
+			<name></name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*.conf</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1352528512460</id>
+			<name></name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-seotools.ini*</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1352528512473</id>
+			<name></name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-setup.py</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>
